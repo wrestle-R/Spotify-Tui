@@ -7,6 +7,7 @@ This directory currently contains a detailed plan, not a working application.
 - [Full implementation plan](PLAN.md)
 - [Acceptance checks and evidence requirements](docs/ACCEPTANCE.md)
 - [Research sources and platform constraints](docs/SOURCES.md)
+- [Current feasibility decision and verified results](docs/FEASIBILITY.md)
 - [Terminal design reference](design/tui-concept.png)
 - [Download the planning bundle](docs/DOWNLOADS.md)
 - [Future GitHub release workflow](docs/RELEASE-PLAN.md)
