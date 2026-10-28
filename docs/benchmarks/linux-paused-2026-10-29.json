@@ -1,0 +1,235 @@
+{
+  "measured_at_utc": "2026-10-28T18:44:48.092314+00:00",
+  "platform": {
+    "os": "Linux",
+    "kernel": "7.2.8-arch1-2",
+    "architecture": "x86_64"
+  },
+  "method": {
+    "metric": "PSS",
+    "unit": "MiB",
+    "warmup_seconds": 60,
+    "windows": 3,
+    "samples_per_window": 20,
+    "interval_seconds": 2,
+    "simultaneous": true,
+    "independent_restarts": false
+  },
+  "groups": {
+    "gui": {
+      "pss_mib": {
+        "median": 814.07,
+        "min": 806.86,
+        "max": 863.9
+      },
+      "rss_mib": {
+        "median": 1371.93,
+        "min": 1363.94,
+        "max": 1427.9
+      },
+      "swap_pss_mib": {
+        "median": 3.44,
+        "min": 3.28,
+        "max": 3.6
+      },
+      "process_count": {
+        "median": 9.0,
+        "min": 9,
+        "max": 9
+      }
+    },
+    "frontend_and_tray": {
+      "pss_mib": {
+        "median": 31.18,
+        "min": 24.9,
+        "max": 32.09
+      },
+      "rss_mib": {
+        "median": 39.57,
+        "min": 33.2,
+        "max": 40.38
+      },
+      "swap_pss_mib": {
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "process_count": {
+        "median": 2.0,
+        "min": 2,
+        "max": 2
+      }
+    },
+    "rust_helper": {
+      "pss_mib": {
+        "median": 1.84,
+        "min": 1.84,
+        "max": 1.86
+      },
+      "rss_mib": {
+        "median": 4.21,
+        "min": 4.21,
+        "max": 4.22
+      },
+      "swap_pss_mib": {
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "process_count": {
+        "median": 1.0,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "soloist": {
+      "pss_mib": {
+        "median": 46.38,
+        "min": 46.37,
+        "max": 46.44
+      },
+      "rss_mib": {
+        "median": 64.54,
+        "min": 64.54,
+        "max": 64.61
+      },
+      "swap_pss_mib": {
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "process_count": {
+        "median": 2.0,
+        "min": 2,
+        "max": 2
+      }
+    },
+    "terminal": {
+      "pss_mib": {
+        "median": 89.36,
+        "min": 89.14,
+        "max": 89.48
+      },
+      "rss_mib": {
+        "median": 177.66,
+        "min": 177.63,
+        "max": 177.77
+      },
+      "swap_pss_mib": {
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "process_count": {
+        "median": 3.0,
+        "min": 3,
+        "max": 3
+      }
+    }
+  },
+  "windows_pss_mib": [
+    {
+      "gui": {
+        "median": 807.15,
+        "min": 806.86,
+        "max": 813.88
+      },
+      "frontend_and_tray": {
+        "median": 31.16,
+        "min": 30.89,
+        "max": 31.66
+      },
+      "rust_helper": {
+        "median": 1.84,
+        "min": 1.84,
+        "max": 1.84
+      },
+      "soloist": {
+        "median": 46.38,
+        "min": 46.37,
+        "max": 46.38
+      },
+      "terminal": {
+        "median": 89.36,
+        "min": 89.35,
+        "max": 89.38
+      }
+    },
+    {
+      "gui": {
+        "median": 814.07,
+        "min": 813.92,
+        "max": 814.59
+      },
+      "frontend_and_tray": {
+        "median": 31.18,
+        "min": 31.02,
+        "max": 31.62
+      },
+      "rust_helper": {
+        "median": 1.84,
+        "min": 1.84,
+        "max": 1.86
+      },
+      "soloist": {
+        "median": 46.38,
+        "min": 46.38,
+        "max": 46.44
+      },
+      "terminal": {
+        "median": 89.36,
+        "min": 89.14,
+        "max": 89.37
+      }
+    },
+    {
+      "gui": {
+        "median": 814.6,
+        "min": 814.43,
+        "max": 863.9
+      },
+      "frontend_and_tray": {
+        "median": 31.32,
+        "min": 24.9,
+        "max": 32.09
+      },
+      "rust_helper": {
+        "median": 1.86,
+        "min": 1.86,
+        "max": 1.86
+      },
+      "soloist": {
+        "median": 46.44,
+        "min": 46.43,
+        "max": 46.44
+      },
+      "terminal": {
+        "median": 89.38,
+        "min": 89.15,
+        "max": 89.48
+      }
+    }
+  ],
+  "tui_total_pss_mib": {
+    "median": 168.79,
+    "min": 162.67,
+    "max": 169.74
+  },
+  "gui_total_pss_mib": {
+    "median": 814.07,
+    "min": 806.86,
+    "max": 863.9
+  },
+  "reduction_percent": 79.3,
+  "workload": "Signed in, libraries loaded, both open, paused; busy desktop; no independent restarts",
+  "versions": {
+    "spotify_tui": "0.4.0",
+    "source_commit": "1a885b86944ceb15788693b35940ec811c447756",
+    "artifact_run": 40746914309,
+    "spotify_gui": "1.2.95.453.g0eeebbed"
+  },
+  "hardware": {
+    "cpu": "Intel Core i7-1360P",
+    "ram_mib": 15668
+  }
+}

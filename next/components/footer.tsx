@@ -12,7 +12,7 @@ const wave = Array.from({ length: 161 }, (_, i) => {
 
 export function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" data-loop>
       <div className="footer-wave" aria-hidden="true">
         <div className="footer-wave-track">
           {[0, 1].map((copy) => (

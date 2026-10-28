@@ -19,6 +19,8 @@ Features and fixes, grouped by release series, newest first. Full details, upgra
 - Add native macOS browser login, a short private socket path and native archive/update validation.
 - Use a portable installer/downloader with checksums, safe extraction and matching Go/Rust activation.
 - Gate releases on native Linux, macOS 15 and macOS 26 build/test/package/terminal checks.
+- Publish the measured Linux RAM comparison, test conditions and sampler on the website.
+- Add lightweight page motion with reduced-motion support and a pause control.
 - Keep Soloist separate, the tray Linux-only, and real Mac account/audio verification explicitly unclaimed.
 
 [Apple Silicon Mac ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_darwin_arm64.tar.gz) · [Linux ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_linux_amd64.tar.gz) · [Full details →](docs/releases/v0.4.0.md)

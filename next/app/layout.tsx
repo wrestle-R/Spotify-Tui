@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { repo } from "@/lib/releases";
+import { Motion } from "@/components/motion";
 import { Footer } from "@/components/footer";
 import "./globals.css";
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </header>
         {children}
         <Footer />
+        <Motion />
       </body>
     </html>
   );

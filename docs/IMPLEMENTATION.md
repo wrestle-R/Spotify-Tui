@@ -73,7 +73,7 @@ This does not count as testing a successful download workflow, because no qualif
 - MPRIS/media keys, eight-hour stability testing, crash recovery under every termination mode, and complete upgrade/uninstall acceptance remain outstanding.
 - Resource targets in PLAN.md are still targets until measured under the stated workload. Any short sample is labeled separately and does not establish long-term RAM savings.
 
-## Short memory sample
+## Short memory sample (historical, before the paired comparison)
 
 With the terminal UI open and the local provider paired but paused, a single `/proc/*/smaps_rollup` sample measured **93.8 MiB combined PSS**: Go TUI 34.7 MiB, Rust helper 1.9 MiB, Soloist main 47.2 MiB and its crash handler 10.1 MiB. Rounding can make component totals differ by 0.1 MiB. This excludes the terminal/browser, is not a playing or eight-hour workload, and has no equivalent official Spotify baseline. No measured savings claim is made.
 
@@ -112,4 +112,13 @@ The live checks below used GitHub-downloaded, installed binaries under `~/.local
 - Go race tests, formatting/vet, eight Rust tests, fmt/clippy and package-check passed. Regression checks cover confirmed and queued toggles, stale polls, Ctrl-U in search, restoration's busy state, stable version ordering, corruption, unsafe archives, unrelated installations, activation and rollback retention.
 - Next.js production export/type checking passed for home, docs, changelog and all four stable release pages. Desktop/mobile browser walkthroughs checked image loading, width bounds, navigation, release details and copy feedback. The browser clipboard connector did not consistently expose read-back; the button reported successful copying and the rendered commands were checked separately. Production dependency audit reported zero known vulnerabilities at the time of testing. The site is local/static source, not a deployed public website.
 
-These results do not establish genuine offline downloads, eight-hour memory/stability acceptance, MPRIS, full liked-song sequencing or search pagination. Those requirements remain outstanding. There is no measured RAM-saving claim and no ad-free guarantee for Free accounts.
+These results do not establish genuine offline downloads, eight-hour memory/stability acceptance, MPRIS, full liked-song sequencing or search pagination. Those requirements remain outstanding. The later short Linux comparison is documented in [MEMORY.md](MEMORY.md); it does not establish long-session savings or macOS memory use. There is no ad-free guarantee for Free accounts.
+
+
+## Native macOS and release checks (29 October 2026)
+
+[Run 40746914309](https://github.com/wrestle-R/Spotify-Tui/actions/runs/40746914309) passed Linux x86_64, native Apple Silicon macOS 15 and macOS 26, and the production website build. Both Mac jobs passed Go race checks, Rust tests, real Go/Rust socket checks with a fake provider endpoint, native signed executable/version checks, verified packaging/install/reinstall tests, an installed terminal demo and the official provider version probe. Real Mac account authorization, Keychain consent and audible playback remain unverified; see [MACOS.md](MACOS.md).
+
+The Linux v0.4.0 artifact from that run was downloaded, checksum-verified and installed into a private managed prefix for the real-account RAM comparison. [MEMORY.md](MEMORY.md) records the complete process scope and limitations; its aggregate JSON contains no account data.
+
+After sampling, the downloaded native Linux candidate passed the real-account full-track progress, pause, resume, seek and volume checks with the temporary official GUI fully closed. Playback was left paused. The production website passed TypeScript/static export, methodology navigation and mobile overflow checks at 390px and 320px. The animation control changed its pressed label, paused both hero and footer CSS animations, and exposed all reveal content. Reduced-motion CSS disables transforms/reveals and animations; OS preference emulation was not available through the browser connector.

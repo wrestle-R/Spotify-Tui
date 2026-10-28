@@ -36,7 +36,7 @@ export default function Docs() {
           Two connections, one player. Browser sign-in loads your library.
           Spotify Soloist handles the actual audio.
         </p>
-        <section id="before">
+        <section data-reveal id="before">
           <span className="step">00 / THE CHECKLIST</span>
           <h2>Before you start</h2>
           <ul>
@@ -60,7 +60,7 @@ export default function Docs() {
             passwords, tokens or provider keys.
           </p>
         </section>
-        <section id="install">
+        <section data-reveal id="install">
           <span className="step">01 / INSTALL</span>
           <h2>Download your platform release</h2>
           <p>
@@ -79,7 +79,7 @@ bash ./spotify-tui-download/install.sh
             <code>spotify-tui</code> directly.
           </p>
         </section>
-        <section id="sign-in">
+        <section data-reveal id="sign-in">
           <span className="step">02 / YOUR LIBRARY</span>
           <h2>Sign in through your browser</h2>
           <ol>
@@ -121,7 +121,7 @@ bash ./spotify-tui-download/install.sh
             </p>
           </details>
         </section>
-        <section id="audio">
+        <section data-reveal id="audio">
           <span className="step">03 / THE AUDIO</span>
           <h2>Connect the local player</h2>
           <p>
@@ -165,7 +165,7 @@ bash ./spotify-tui-download/install.sh
             restarts the helper.
           </p>
         </section>
-        <section id="keyboard">
+        <section data-reveal id="keyboard">
           <span className="step">04 / MAKE YOURSELF AT HOME</span>
           <h2>Keys you’ll actually remember</h2>
           <div className="table-scroll">
@@ -218,7 +218,7 @@ bash ./spotify-tui-download/install.sh
             Konsole, GNOME Terminal or xterm.
           </p>
         </section>
-        <section id="updates">
+        <section data-reveal id="updates">
           <span className="step">05 / KEEP IT CURRENT</span>
           <h2>Stay in the terminal</h2>
           <p>
@@ -238,7 +238,7 @@ bash ./spotify-tui-download/install.sh
             command.
           </p>
         </section>
-        <section id="troubleshooting">
+        <section data-reveal id="troubleshooting">
           <h2>If something gets stuck</h2>
           <details>
             <summary>The device isn’t in Spotify’s picker</summary>
@@ -281,7 +281,7 @@ bash ./spotify-tui-download/install.sh
             </p>
           </details>
         </section>
-        <section id="limits">
+        <section data-reveal id="limits">
           <h2>What’s still missing</h2>
           <p>
             <strong>Genuine offline downloads are unsupported.</strong> Premium

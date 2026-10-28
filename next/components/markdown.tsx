@@ -15,8 +15,9 @@ export function Markdown({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          h2: ({ children }) => <h2 data-reveal>{children}</h2>,
           h3: ({ children }) => (
-            <h3
+            <h3 data-reveal
               id={String(children)
                 .toLowerCase()
                 .replace(/[^a-z0-9]/g, "")}
@@ -32,7 +33,9 @@ export function Markdown({
                 : null;
             const target = match
               ? `/changelog/${match[1]}${href?.includes("#") ? "#" + href.split("#")[1] : ""}`
-              : local?.startsWith("docs/SETUP.md")
+              : local?.startsWith("docs/MEMORY.md")
+                ? "/memory"
+                : local?.startsWith("docs/SETUP.md")
                 ? "/docs"
                 : local?.startsWith("CHANGELOG.md")
                   ? `/changelog${local.includes("#") ? "#" + local.split("#")[1] : ""}`

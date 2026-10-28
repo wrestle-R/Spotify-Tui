@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { download, latest, repo } from "@/lib/releases";
-import { Code } from "@/components/code";
+import { MemoryStats } from "@/components/memory-stats";
 export default function Home() {
   return (
     <main id="main">
       <section className="hero wrap">
-        <div className="hero-copy">
+        <div className="hero-copy" data-reveal>
           <div className="eyebrow">
             <span className="live-dot" /> {latest()} / LINUX + APPLE SILICON
           </div>
@@ -33,7 +33,7 @@ export default function Home() {
           </div>
           <p className="fine">Linux x86_64 / Apple Silicon Mac · Premium setup required</p>
         </div>
-        <div className="hero-art">
+        <div className="hero-art" data-loop>
           <div className="orbit orbit-one" />
           <div className="orbit orbit-two" />
           <Image
@@ -53,7 +53,7 @@ export default function Home() {
         </div>
       </section>
       <section className="showcase wrap" id="player">
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <div>
             <span className="eyebrow">FAMILIAR MUSIC. DIFFERENT WINDOW.</span>
             <h2>
@@ -69,7 +69,7 @@ export default function Home() {
             <br className="desktop" /> you were doing.
           </p>
         </div>
-        <div className="terminal-shell">
+        <div className="terminal-shell" data-reveal>
           <div className="terminal-top">
             <div>
               <i />
@@ -94,8 +94,9 @@ export default function Home() {
           <Link href="/docs#keyboard">Meet the keyboard shortcuts ↗</Link>
         </div>
       </section>
+      <MemoryStats />
       <section className="features wrap">
-        <article>
+        <article data-reveal>
           <span className="feature-index">01 / THE POINT</span>
           <h3>
             Keep your RAM
@@ -104,11 +105,11 @@ export default function Home() {
           </h3>
           <p>
             A terminal interface with a Rust playback helper. Built because the
-            desktop app felt too heavy. Memory savings haven’t been benchmarked
-            against Spotify yet.
+            desktop app felt too heavy. The Linux comparison above includes the
+            audio provider and terminal, because the whole setup is what matters.
           </p>
         </article>
-        <article>
+        <article data-reveal>
           <span className="feature-index">02 / THE FEEL</span>
           <h3>
             Hands on keys.
@@ -120,7 +121,7 @@ export default function Home() {
             listening. The tray brings playback controls into your Linux panel.
           </p>
         </article>
-        <article>
+        <article data-reveal>
           <span className="feature-index">03 / THE UPKEEP</span>
           <h3>
             A new release?
@@ -134,7 +135,7 @@ export default function Home() {
           </p>
         </article>
       </section>
-      <section className="setup-banner wrap">
+      <section className="setup-banner wrap" data-reveal>
         <span className="eyebrow">A LITTLE SETUP. THEN YOUR MUSIC.</span>
         <div>
           <h2>
@@ -151,7 +152,7 @@ export default function Home() {
           Sign-in opens in your normal browser. No passwords on this website.
         </p>
       </section>
-      <section className="honest wrap">
+      <section className="honest wrap" data-reveal>
         <span>BEFORE YOU DOWNLOAD</span>
         <p>
           Online playback is the current focus.{" "}
