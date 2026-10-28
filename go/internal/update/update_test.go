@@ -59,7 +59,11 @@ func installed(t *testing.T) (string, string) {
 			t.Fatal(err)
 		}
 	}
-	return prefix, filepath.Join(stage, "spotify-tui")
+	canonical, err := filepath.EvalSymlinks(prefix)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return canonical, filepath.Join(canonical, "lib", "spotify-tui", "build.old", "spotify-tui")
 }
 func fixtureClient(t *testing.T, corrupt bool) (*Client, string) {
 	prefix, exe := installed(t)

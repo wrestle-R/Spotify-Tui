@@ -91,6 +91,19 @@ class ReleaseTests(unittest.TestCase):
                 release.extract(archive, destination, NAME)
             self.assertEqual(list(destination.iterdir()), [])
 
+    def test_archive_member_count_is_bounded(self):
+        archive = self.base / "many.tar.gz"
+        with tarfile.open(archive, "w:gz") as output:
+            for index in range(2001):
+                member = tarfile.TarInfo(NAME + "/dir" + str(index))
+                member.type = tarfile.DIRTYPE
+                output.addfile(member)
+        destination = self.base / "many"
+        destination.mkdir()
+        with self.assertRaisesRegex(ValueError, "Too many"):
+            release.extract(archive, destination, NAME)
+        self.assertEqual(list(destination.iterdir()), [])
+
     def test_platform_mapping_and_real_installer_wrapper(self):
         with patch.object(release.platform, "system", return_value="Darwin"), patch.object(release.platform, "machine", return_value="arm64"):
             self.assertEqual(release.target(), "darwin_arm64")

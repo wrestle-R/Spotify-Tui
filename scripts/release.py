@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Portable Linux/macOS package, verified download and managed installation."""
 import argparse
-import contextlib
 import fcntl
 import hashlib
 import json
@@ -176,11 +175,12 @@ def verify_checksum(archive, sums):
 def extract(archive, destination, root):
     seen = set()
     with tarfile.open(archive, "r:gz") as source:
-        members = source.getmembers()
+        members = []
         total = 0
-        if len(members) > 2000:
-            raise ValueError("Too many archive members")
-        for member in members:
+        for member in source:
+            if len(members) >= 2000:
+                raise ValueError("Too many archive members")
+            members.append(member)
             path = PurePosixPath(member.name)
             if member.name.rstrip("/") != str(path) or path.is_absolute() or ".." in path.parts or path.parts[0] != root:
                 raise ValueError("Unsafe archive path")

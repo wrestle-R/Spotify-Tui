@@ -14,7 +14,7 @@ Features and fixes, grouped by release series, newest first. Full details, upgra
 
 ### v0.4.0
 
-28 October 2026 · **Stable** · Linux x86_64 and Apple Silicon macOS
+29 October 2026 · **Stable** · Linux x86_64 and Apple Silicon macOS
 
 - Add native macOS browser login, a short private socket path and native archive/update validation.
 - Use a portable installer/downloader with checksums, safe extraction and matching Go/Rust activation.
