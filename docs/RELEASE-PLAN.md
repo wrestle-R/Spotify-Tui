@@ -1,6 +1,6 @@
 # Build and release workflow
 
-This document plans automation and acceptance for a later complete app. The requested Linux download now has a regular `v0.2.0` release with a verified archive, local installer and download script. Offline downloads remain unsupported, so it does not pass the complete-product acceptance gates below. No GitHub Actions workflow is installed.
+This document plans automation and acceptance for a later complete app. The requested Linux download now has a regular `v0.2.1` release with a verified archive, local installer and download script. Offline downloads remain unsupported, so it does not pass the complete-product acceptance gates below. No GitHub Actions workflow is installed.
 
 ## Pull requests and branch changes
 

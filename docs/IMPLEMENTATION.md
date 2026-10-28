@@ -2,7 +2,7 @@
 
 28 October 2026. The user explicitly requested starting implementation after the planning/feasibility discussion. This authorizes building the independent functional parts while preserving offline as an unresolved required feature. The full product is not accepted and is not being advertised as complete.
 
-## Linux release: 0.2.0
+## Linux release: 0.2.1
 
 - Reworked keyboard focus and movement: Up/Down or j/k, Left/h/Esc for library, Right/l/Enter to open, Tab to switch. Paging and Home/End move the focused pane and preserve its scroll position.
 - Narrow terminals display the focused pane rather than hiding the library. Selection/focus markers work without colour; Spotify-green selection and charcoal background provide the colour theme.

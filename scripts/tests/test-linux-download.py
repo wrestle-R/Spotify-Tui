@@ -1,6 +1,6 @@
 import hashlib,io,os,pathlib,shutil,subprocess,tarfile,tempfile
 root=pathlib.Path(__file__).resolve().parents[2];os.chdir(root)
-version='0.2.0';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
+version='0.2.1';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
 base=pathlib.Path(tempfile.mkdtemp(prefix='release test ',dir=root/'work'))
 fake=base/'fakebin';fake.mkdir();gh=fake/'gh'
 gh.write_text('''#!/usr/bin/env bash
@@ -26,6 +26,7 @@ def run(case,success):
  return destination
 shutil.copyfile(root/'dist/release'/archive,fixture/archive);hashes()
 valid=run('valid download',True)
+assert (valid/'CHANGELOG.md').is_file()
 assert (valid/'spotify-tui').read_bytes()==(root/'dist/spotify-tui').read_bytes()
 with (fixture/archive).open('ab') as f:f.write(b'corrupt')
 run('bad checksum',False)
@@ -41,7 +42,7 @@ p=subprocess.run(['bash','scripts/download-linux.sh','--destination',str(existin
 assert p.returncode!=0 and (existing/'keep').read_text()=='keep'
 prefix=base/'install prefix'
 subprocess.run(['bash',str(valid/'install.sh'),'--prefix',str(prefix)],check=True,capture_output=True)
-assert subprocess.check_output([str(prefix/'bin/spotify-tui'),'version'],text=True,env=env).strip()=='spotify-tui 0.2.0'
-assert subprocess.check_output([str(prefix/'bin/spotify-tui-playback'),'--version'],text=True,env=env).strip()=='spotify-tui-playback 0.2.0'
+assert subprocess.check_output([str(prefix/'bin/spotify-tui'),'version'],text=True,env=env).strip()=='spotify-tui 0.2.1'
+assert subprocess.check_output([str(prefix/'bin/spotify-tui-playback'),'--version'],text=True,env=env).strip()=='spotify-tui-playback 0.2.1'
 subprocess.run(['bash',str(valid/'install.sh'),'--prefix',str(prefix)],check=True,capture_output=True)
 print('Linux archive download, checksum failure, path/link rejection, overwrite refusal, temp cleanup, package installation/upgrade and version pairing (paths with spaces): PASS')

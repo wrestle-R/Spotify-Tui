@@ -8,18 +8,18 @@ Go for the TUI, Rust for the local playback helper. **Linux only for now.** The 
 
 Actual terminal capture of `--demo`, using generic sample playlists and songs. The demo produces no audio and reads no account data.
 
-[What's new](CHANGELOG.md) · [Full release details](docs/releases/v0.2.0.md)
+[What's new](CHANGELOG.md) · [Full release details](docs/releases/v0.2.1.md)
 
 ## Download
 
-**[Download for Linux x86_64](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.0/spotify-tui_0.2.0_linux_amd64.tar.gz)** · [Release notes and checksums](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.0)
+**[Download for Linux x86_64](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.1/spotify-tui_0.2.1_linux_amd64.tar.gz)** · [Release notes and checksums](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.1)
 
 This is the first packaged release. The archive includes the TUI, Rust helper and local installer. It needs glibc 2.39 or newer, a Spotify Premium account and separate [Soloist setup](docs/SETUP.md#local-playback-through-official-soloist). Soloist comes from Spotify and isn't bundled here.
 
 The repo is private, so downloads require GitHub access. Using an authenticated GitHub CLI:
 
 ```bash
-gh release download v0.2.0 --repo wrestle-R/Spotify-Tui --pattern download-linux.sh
+gh release download v0.2.1 --repo wrestle-R/Spotify-Tui --pattern download-linux.sh
 less download-linux.sh
 bash download-linux.sh --destination ./spotify-tui-linux
 bash ./spotify-tui-linux/install.sh
