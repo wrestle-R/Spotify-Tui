@@ -1,13 +1,13 @@
 # Downloads and release plan
 
-## Linux alpha download
+## Linux release download
 
-[Linux x86_64 archive](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.0-alpha.1/spotify-tui_0.2.0-alpha.1_linux_amd64.tar.gz) · [release files](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.0-alpha.1). This is a development alpha, not the completed offline player. Tested on Arch; glibc 2.39 or newer and libgcc_s are required. Soloist is obtained separately from Spotify.
+[Linux x86_64 archive](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.0/spotify-tui_0.2.0_linux_amd64.tar.gz) · [release files](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.0). This is the current online-player release. The original offline requirement remains incomplete. Tested on Arch; glibc 2.39 or newer and libgcc_s are required. Soloist is obtained separately from Spotify.
 
 The private repository requires authenticated access. Download the script, inspect it and run it:
 
 ```bash
-gh release download v0.2.0-alpha.1 --repo wrestle-R/Spotify-Tui --pattern download-linux.sh
+gh release download v0.2.0 --repo wrestle-R/Spotify-Tui --pattern download-linux.sh
 less download-linux.sh
 bash download-linux.sh --destination ./spotify-tui-linux
 bash ./spotify-tui-linux/install.sh --dry-run

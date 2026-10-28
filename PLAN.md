@@ -451,7 +451,7 @@ If Soloist is chosen, link to official downloads and let the user obtain it; do 
 
 The user subsequently authorized creating a GitHub repository and a download script. This planning handoff therefore includes a private repository, an initial documentation commit, and a planning release with a verified-download script. No system service, global audio reconfiguration, Spotify account-login browser session, package installation, or application implementation is included. A later build request still cannot make missing provider capabilities exist.
 
-The original planning download remains documentation-only. A subsequent explicit request for a Linux app download authorized a clearly labelled development alpha. See [DOWNLOADS.md](docs/DOWNLOADS.md) for the binary bundle and checksum-verifying downloader. The complete-product release remains gated on playback/offline acceptance.
+The original planning download remains documentation-only. A subsequent explicit request for a Linux app download authorized a regular Linux release. See [DOWNLOADS.md](docs/DOWNLOADS.md) for the binary bundle and checksum-verifying downloader. The complete-product release remains gated on playback/offline acceptance.
 
 ## 22. Local notes and environment-file workflow
 

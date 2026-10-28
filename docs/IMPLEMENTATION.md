@@ -2,7 +2,7 @@
 
 28 October 2026. The user explicitly requested starting implementation after the planning/feasibility discussion. This authorizes building the independent functional parts while preserving offline as an unresolved required feature. The full product is not accepted and is not being advertised as complete.
 
-## Linux alpha: 0.2.0-alpha.1
+## Linux release: 0.2.0
 
 - Reworked keyboard focus and movement: Up/Down or j/k, Left/h/Esc for library, Right/l/Enter to open, Tab to switch. Paging and Home/End move the focused pane and preserve its scroll position.
 - Narrow terminals display the focused pane rather than hiding the library. Selection/focus markers work without colour; Spotify-green selection and charcoal background provide the colour theme.
@@ -11,7 +11,7 @@
 - Loading, empty, unavailable-item and provider/account errors have separate visible states. Search refresh retains its query; delayed collection/account results are rejected.
 - `--demo` uses generic local sample songs and playlists without authentication, provider startup, network access or audio. The README screenshot is a capture of that mode. Sample durations are fixtures, not catalog metadata.
 - Code now lives under `go/` and `rust/`, with root `scripts/`, `protocol/`, `docs/` and `design/`. Root Make targets handle both languages.
-- Linux x86_64 alpha packaging includes both binaries and a user-prefix installer; a checksum-verifying downloader handles private GitHub Releases. The Rust helper needs glibc >=2.39. Go is built with CGO disabled.
+- Linux x86_64 release packaging includes both binaries and a user-prefix installer; a checksum-verifying downloader handles private GitHub Releases. The Rust helper needs glibc >=2.39. Go is built with CGO disabled.
 
 Verification: keyboard regression tests and layout bounds, Go race/vet/format, Rust tests/fmt/clippy and actual Go/Rust protocol pass after restructuring. A real-account PTY walkthrough passed collection navigation, paging, search, narrow resize, automatic startup/playback, pause and terminal restoration. A later repetition encountered an external Spotify connectivity timeout while searching; the UI displayed the connection failure. Another cold-start repetition hit Soloist's intermittent saved-session login problem. The account restored after restart and the standalone live playback/control check passed again. This does not establish perfect network/provider recovery. The generic demo was also exercised with empty XDG paths and wrote no account/runtime files. Linux package checks passed valid extraction, corrupt checksum refusal, traversal/link refusal, existing-destination protection, temporary cleanup, installation/upgrade and both version commands with paths containing spaces. Run `make package-check` to reproduce the package checks.
 

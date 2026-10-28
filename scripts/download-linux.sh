@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repository='wrestle-R/Spotify-Tui'
-version='0.2.0-alpha.1'
+version='0.2.0'
 destination='./spotify-tui-linux'
 dry_run=false
 work_dir=''
