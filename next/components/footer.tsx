@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { download, latest, repo } from "@/lib/releases";
+import { latest, repo } from "@/lib/releases";
 
 // Build the decorative curve once during static export, with no client runtime.
 const wave = Array.from({ length: 161 }, (_, i) => {
@@ -49,10 +49,10 @@ export function Footer() {
                 GitHub <span aria-hidden="true">↗</span>
               </a>
             </nav>
-            <a className="footer-download" href={download()}>
+            <Link className="footer-download" href="/docs#install">
               Get the player
               <span aria-hidden="true">↗</span>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="footer-bottom">

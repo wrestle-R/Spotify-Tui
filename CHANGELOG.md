@@ -95,4 +95,4 @@ The [planning-v0.1.0 bundle](https://github.com/wrestle-R/Spotify-Tui/releases/t
 
 Each release page explains the tested packages, requirements, known issues and available validation evidence. The current Linux package is checksum-verified and unsigned. Offline downloads, broader provider recovery and long-session memory/stability validation remain outstanding. The repository and release downloads are public.
 
-[Read the latest release details →](docs/releases/v0.3.1.md)
+[Read the latest release details →](docs/releases/v0.4.0.md)

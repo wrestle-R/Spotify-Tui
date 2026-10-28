@@ -15,9 +15,8 @@ export function Markdown({
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h2: ({ children }) => <h2 data-reveal>{children}</h2>,
           h3: ({ children }) => (
-            <h3 data-reveal
+            <h3
               id={String(children)
                 .toLowerCase()
                 .replace(/[^a-z0-9]/g, "")}

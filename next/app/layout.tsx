@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { repo } from "@/lib/releases";
+import { NavLinks } from "@/components/nav-links";
 import { Motion } from "@/components/motion";
 import { Footer } from "@/components/footer";
 import "./globals.css";
@@ -29,13 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <span className="brand-dot">.</span>
             </span>
           </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/docs">Docs</Link>
-            <Link href="/changelog">Changelog</Link>
-            <a href={repo} className="github">
-              GitHub <span aria-hidden="true">↗</span>
-            </a>
-          </nav>
+          <NavLinks repo={repo} />
         </header>
         {children}
         <Footer />

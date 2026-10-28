@@ -76,6 +76,10 @@ jobs:
         run: |
           python3 scripts/release.py install --from dist --prefix "$RUNNER_TEMP/spotify-installed"
           python3 scripts/tests/smoke-terminal.py "$RUNNER_TEMP/spotify-installed/bin/spotify-tui"
+      - name: Download and install the actual public stable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/tests/published-download.py
       - name: Check official provider starts on this architecture
         shell: bash
         run: |
@@ -97,13 +101,37 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   website:
-    name: Website production build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    name: Website / ${{ matrix.runner }} / ${{ matrix.browser }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            browser: chromium
+          - runner: macos-26
+            browser: webkit
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
       - run: npm ci --prefix next
       - run: npm run build --prefix next
+      - name: Install test browser
+        working-directory: next
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Production setup and navigation walkthrough
+        working-directory: next
+        run: npm run test:e2e -- --project=${{ matrix.browser }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: failure()
+        with:
+          name: website-failure-${{ matrix.runner }}
+          path: next/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
   publish:
     name: Publish verified stable assets
     needs: [native, website]

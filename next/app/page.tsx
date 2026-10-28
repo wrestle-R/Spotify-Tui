@@ -147,6 +147,10 @@ export default function Home() {
             Let’s set it up <span aria-hidden="true">↗</span>
           </Link>
         </div>
+        <nav className="setup-mini" aria-label="Setup guide">
+          {[["install", "Install"], ["sign-in", "Sign in"], ["audio", "Pair"], ["play", "Play"]].map(([id, label], index) =>
+            <Link href={`/docs#${id}`} key={id}><span>{String(index + 1).padStart(2, "0")}</span> {label} <span aria-hidden="true">↗</span></Link>)}
+        </nav>
         <p>
           You’ll need your own Spotify Developer app and personal Soloist key.
           Sign-in opens in your normal browser. No passwords on this website.
