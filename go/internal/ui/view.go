@@ -181,7 +181,13 @@ func (m Model) View() string {
 	} else if !m.player.Connected || m.player.URI == "" {
 		symbol = "○"
 	}
-	now := symbol + "  " + spotify.Clean(title)
+	stateLabel := "Stopped"
+	if m.player.Status == "playing" {
+		stateLabel = "Playing"
+	} else if m.player.Status == "paused" {
+		stateLabel = "Paused"
+	}
+	now := symbol + "  " + stateLabel + ": " + spotify.Clean(title)
 	if m.player.Artist != "" {
 		now += " · " + spotify.Clean(m.player.Artist)
 	}
@@ -219,7 +225,10 @@ func (m Model) View() string {
 		hint = "Sign-in pending · c restarts player · first setup needs Spotify device pairing"
 	}
 	if m.inputMode == "search" {
-		hint = "←/→ edit · Ctrl-U clear · Enter search · Esc cancel"
+		hint = "←/→ edit · Ctrl-G clear · Enter search · Esc cancel"
+	}
+	if m.updateNotice != "" {
+		hint = m.updateNotice
 	}
 	lines = append(lines, muted.Render(plainFit(hint, w)))
 	footer := "↑↓ Move  ← Library  →/Enter Open  / Search  ? Help  q Quit"
@@ -294,7 +303,7 @@ func (m Model) trackLine(row, width int) string {
 	}
 	t := m.tracks[i]
 	marker := " "
-	playing := t.URI != "" && t.URI == m.player.URI
+	playing := t.URI != "" && t.URI == m.player.URI && m.player.Status == "playing"
 	if playing {
 		marker = "▶"
 	}
@@ -337,7 +346,7 @@ func bounded(lines []string, w, h int) string {
 	return strings.Join(lines, "\n")
 }
 func (m Model) helpView() string {
-	lines := []string{active.Render(" spotify tui / keyboard"), "", "↑/↓ or j/k     Move in the focused pane", "←/h or Esc     Return to library", "→/l or Enter   Open collection; Enter on song plays", "Tab / Shift-Tab  Switch panes", "PgUp/PgDn · Home/End  Page or jump in focused pane", "/ or Ctrl-F    Search · Enter submits · Esc cancels", "Space          Pause / resume", "n/p · Ctrl-→/←  Next / previous", "[ / ]          Seek backward / forward 5 seconds", "+ / -          Volume · s shuffle · r repeat", "a queue song · P play playlist from its start", "R refresh pane · c reconnect · L browser sign-in", "q quit (audio continues) · Q stop audio and quit", "", "Offline downloads are unsupported.", "", "Press Esc, ? or any key to return."}
+	lines := []string{active.Render(" spotify tui / keyboard"), "", "↑/↓ or j/k     Move in the focused pane", "←/h or Esc     Return to library", "→/l or Enter   Open collection; Enter on song plays", "Tab / Shift-Tab  Switch panes", "PgUp/PgDn · Home/End  Page or jump in focused pane", "/ or Ctrl-F    Search · Enter submits · Esc cancels", "Space          Pause / resume", "n/p · Ctrl-→/←  Next / previous", "[ / ]          Seek backward / forward 5 seconds", "+ / -          Volume · s shuffle · r repeat", "a queue song · P play playlist from its start", "R refresh pane · c reconnect · L browser sign-in", "q quit (audio continues) · Q stop audio and quit", "Ctrl-U check, install stable update and restart", "", "Offline downloads are unsupported.", "", "Press Esc, ? or any key to return."}
 	if len(lines) > m.height && m.height > 1 {
 		lines = append(lines[:m.height-1], "Esc returns to your music.")
 	}

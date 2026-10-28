@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repository='wrestle-R/Spotify-Tui'
-version='0.2.1'
+version='0.3.0'
 destination='./spotify-tui-linux'
 dry_run=false
 work_dir=''
@@ -14,26 +14,30 @@ while [[ $# -gt 0 ]]; do
     --destination) [[ $# -ge 2 && -n "$2" ]] || fail '--destination needs a directory'; destination=$2; shift 2 ;;
     --dry-run) dry_run=true; shift ;;
     --help|-h)
-      printf 'Download and verify the Linux x86_64 development build. No install or execution.\nUsage: bash download-linux.sh [--version VERSION] [--destination NEW_DIRECTORY] [--dry-run]\nRequires authenticated gh access to wrestle-R/Spotify-Tui, tar, sha256sum and GNU tools.\nTested on Arch Linux; Rust helper requires glibc 2.39 or later.\nSoloist and Spotify setup are separate. Offline downloads are unsupported.\n'
+      printf 'Download and verify the Linux x86_64 release. No install or execution.\nUsage: bash download-linux.sh [--version VERSION] [--destination NEW_DIRECTORY] [--dry-run]\nRequires curl, tar, sha256sum and GNU tools. Private repositories can use authenticated gh.\nTested on Arch Linux; Rust helper requires glibc 2.39 or later.\nSoloist and Spotify setup are separate. Offline downloads are unsupported.\n'
       exit 0 ;;
     *) fail "Unknown option: $1" ;;
   esac
 done
-[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]] || fail 'Invalid version'
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail 'Invalid version'
 [[ "$(uname -s)" == Linux && "$(uname -m)" == x86_64 ]] || fail 'This download supports Linux x86_64 only; build source for other targets'
 [[ ! -e "$destination" && ! -L "$destination" ]] || fail 'Destination exists; nothing overwritten'
 archive="spotify-tui_${version}_linux_amd64.tar.gz"
 root="spotify-tui_${version}_linux_amd64"
 if [[ "$dry_run" == true ]]; then printf 'Would download %s from %s release v%s, verify SHA-256, and extract into %s.\n' "$archive" "$repository" "$version" "$destination"; exit 0; fi
-for tool in gh tar sha256sum mktemp awk; do command -v "$tool" >/dev/null || fail "Required tool missing: $tool"; done
-gh auth status --hostname github.com >/dev/null 2>&1 || fail 'Run gh auth login using an account with repository access'
+for tool in curl tar sha256sum mktemp awk; do command -v "$tool" >/dev/null || fail "Required tool missing: $tool"; done
 parent=$(dirname -- "$destination"); name=$(basename -- "$destination")
 mkdir -p -- "$parent"; parent=$(cd -- "$parent" && pwd -P); destination="$parent/$name"
 work_dir=$(mktemp -d -- "$parent/.spotify-tui-linux.XXXXXX")
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
-gh release download "v$version" --repo "$repository" --pattern "$archive" --pattern SHA256SUMS --dir "$work_dir" || fail 'Release download failed; check repository access and connectivity'
+base_url="https://github.com/$repository/releases/download/v$version"
+if ! { curl --fail --location --silent --show-error --max-time 120 "$base_url/$archive" -o "$work_dir/$archive" && curl --fail --location --silent --show-error --max-time 30 "$base_url/SHA256SUMS" -o "$work_dir/SHA256SUMS"; }; then
+ rm -f -- "$work_dir/$archive" "$work_dir/SHA256SUMS"
+ command -v gh >/dev/null || fail 'Release download failed; check connectivity'
+ gh release download "v$version" --repo "$repository" --pattern "$archive" --pattern SHA256SUMS --dir "$work_dir" || fail 'Release download failed; check repository access and connectivity'
+fi
 expected=$(awk -v name="$archive" '$2 == name {print $1}' "$work_dir/SHA256SUMS")
 [[ "$expected" =~ ^[a-fA-F0-9]{64}$ ]] || fail 'Expected exactly one archive checksum'
 printf '%s  %s\n' "$expected" "$archive" > "$work_dir/expected.sha256"

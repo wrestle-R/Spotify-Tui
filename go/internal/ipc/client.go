@@ -20,6 +20,8 @@ import (
 )
 
 type State struct {
+	Instance          string `json:"instance"`
+	Revision          uint64 `json:"revision"`
 	Connected         bool   `json:"connected"`
 	LoggedIn          bool   `json:"logged_in"`
 	Status            string `json:"status"`

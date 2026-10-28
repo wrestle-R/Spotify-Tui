@@ -18,6 +18,9 @@ func (m Model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.cancelWork()
 		return m, tea.Quit
 	}
+	if key == "ctrl+u" {
+		return m.with(m.requestUpdate())
+	}
 	if m.help {
 		m.help = false
 		return m, nil
@@ -45,6 +48,7 @@ func (m Model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.cancelWork()
 		return m, tea.Quit
 	case "Q":
+		m.stopRequested = true
 		m.cancelWork()
 		player := m.Player
 		return m, func() tea.Msg {
@@ -87,7 +91,7 @@ func (m Model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	case "pgdown", "ctrl+d":
 		m.move(m.pageSize())
-	case "pgup", "ctrl+u":
+	case "pgup":
 		m.move(-m.pageSize())
 	case "enter":
 		if m.sidebar {
@@ -109,13 +113,10 @@ func (m Model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m.with(m.perform("Add song to queue", playerCommand{"add_to_queue", map[string]any{"uri": m.tracks[m.selected].URI}}))
 		}
 	case " ", "space":
-		if m.player.Status == "playing" {
-			return m.with(m.perform("Pause", playerCommand{"pause", nil}))
-		}
 		if m.player.URI == "" && !m.sidebar {
 			return m.with(m.playSelected())
 		}
-		return m.with(m.perform("Resume", playerCommand{"resume", nil}))
+		return m.with(m.perform("Toggle playback", playerCommand{"toggle_pause", nil}))
 	case "n", "ctrl+right":
 		return m.with(m.perform("Next song", playerCommand{"next", nil}))
 	case "p", "ctrl+left":
@@ -207,7 +208,7 @@ func (m Model) editInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			runes = append(runes[:m.cursor], runes[m.cursor+1:]...)
 			m.input = string(runes)
 		}
-	case "ctrl+u":
+	case "ctrl+g":
 		m.input = ""
 		m.cursor = 0
 	case "ctrl+k":

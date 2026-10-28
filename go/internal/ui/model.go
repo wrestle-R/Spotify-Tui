@@ -11,6 +11,7 @@ import (
 	"github.com/wrestle-R/Spotify-Tui/go/internal/config"
 	"github.com/wrestle-R/Spotify-Tui/go/internal/ipc"
 	"github.com/wrestle-R/Spotify-Tui/go/internal/spotify"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/update"
 )
 
 type Library interface {
@@ -48,27 +49,34 @@ type loginMsg struct{ err error }
 type tickMsg time.Time
 
 type Model struct {
-	Cfg                                   config.Config
-	Paths                                 config.Paths
-	Auth                                  *auth.Manager
-	Library                               Library
-	Player                                Player
-	width, height                         int
-	playlists                             []spotify.Playlist
-	tracks                                []spotify.Track
-	selected, sideSelection               int
-	trackOffset, sideOffset               int
-	sidebar                               bool
-	view, title, playlistID, searchQuery  string
-	generation, libraryGeneration         uint64
-	loading, playlistsLoading             bool
-	rowError, warning                     string
-	input, inputMode                      string
-	cursor                                int
-	status, noticeKind                    string
-	player                                ipc.State
-	help, connecting, busy, demo          bool
-	loginCancel, dataCancel, playerCancel context.CancelFunc
+	resumeURI                                  string
+	resumePosition                             int64
+	updater                                    Updater
+	version, updateNotice, restartPath         string
+	latest                                     *update.Release
+	installAfterCheck, updating, stopRequested bool
+	updateCancel                               context.CancelFunc
+	Cfg                                        config.Config
+	Paths                                      config.Paths
+	Auth                                       *auth.Manager
+	Library                                    Library
+	Player                                     Player
+	width, height                              int
+	playlists                                  []spotify.Playlist
+	tracks                                     []spotify.Track
+	selected, sideSelection                    int
+	trackOffset, sideOffset                    int
+	sidebar                                    bool
+	view, title, playlistID, searchQuery       string
+	generation, libraryGeneration              uint64
+	loading, playlistsLoading                  bool
+	rowError, warning                          string
+	input, inputMode                           string
+	cursor                                     int
+	status, noticeKind                         string
+	player                                     ipc.State
+	help, connecting, busy, demo               bool
+	loginCancel, dataCancel, playerCancel      context.CancelFunc
 }
 
 func New(c config.Config, p config.Paths, a *auth.Manager, library Library, player Player) Model {
@@ -82,9 +90,9 @@ func New(c config.Config, p config.Paths, a *auth.Manager, library Library, play
 func tick() tea.Cmd { return tea.Tick(time.Second, func(t time.Time) tea.Msg { return tickMsg(t) }) }
 func (m Model) Init() tea.Cmd {
 	if m.Cfg.ClientID == "" {
-		return tick()
+		return tea.Batch(tick(), m.checkUpdates())
 	}
-	return tea.Batch(tick(), m.loadPlaylists(), m.loadRows("liked", "", m.generation), m.pollPlayer())
+	return tea.Batch(tick(), m.checkUpdates(), m.resumeAfterUpdate(), m.loadPlaylists(), m.loadRows("liked", "", m.generation), m.pollPlayer())
 }
 func (m *Model) notify(message, kind string) { m.status = message; m.noticeKind = kind }
 func (m Model) loadPlaylists() tea.Cmd {
@@ -216,6 +224,9 @@ func (m *Model) open(view, title, value string) tea.Cmd {
 	return m.loadRowsContext(ctx, view, value, m.generation)
 }
 func (m *Model) cancelWork() {
+	if m.updateCancel != nil {
+		m.updateCancel()
+	}
 	if m.playerCancel != nil {
 		m.playerCancel()
 	}
@@ -242,6 +253,40 @@ func (m *Model) showDownloads() {
 }
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case updateCheckedMsg:
+		if msg.err != nil {
+			m.updateNotice = "Updates unavailable · Ctrl-U retry"
+			if m.installAfterCheck {
+				m.installAfterCheck = false
+				m.notify(msg.err.Error(), "error")
+			}
+			return m, nil
+		}
+		m.latest = msg.release
+		if msg.release == nil {
+			m.updateNotice = "v" + m.version + " · up to date"
+			if m.installAfterCheck {
+				m.notify("You're on the latest stable release.", "success")
+			}
+			m.installAfterCheck = false
+			return m, nil
+		}
+		m.updateNotice = msg.release.Tag + " available · Ctrl-U update"
+		if m.installAfterCheck {
+			return m.with(m.requestUpdate())
+		}
+	case updateInstalledMsg:
+		m.updating = false
+		m.updateCancel = nil
+		if msg.err != nil {
+			m.updateNotice = "Update failed · Ctrl-U retry"
+			m.notify(msg.err.Error(), "error")
+			return m, nil
+		}
+		m.restartPath = msg.installation.Executable
+		m.cancelWork()
+		return m, tea.Quit
+
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
@@ -249,6 +294,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(tick(), m.pollPlayer())
 	case playerMsg:
 		if msg.err == nil {
+			if msg.state.Instance == m.player.Instance && msg.state.Revision < m.player.Revision {
+				return m, nil
+			}
 			m.player = msg.state
 		} else {
 			m.player.Connected = false

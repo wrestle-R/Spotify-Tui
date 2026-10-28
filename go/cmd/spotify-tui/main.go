@@ -8,7 +8,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,11 +18,13 @@ import (
 	"github.com/wrestle-R/Spotify-Tui/go/internal/config"
 	"github.com/wrestle-R/Spotify-Tui/go/internal/ipc"
 	"github.com/wrestle-R/Spotify-Tui/go/internal/spotify"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/tray"
 	"github.com/wrestle-R/Spotify-Tui/go/internal/ui"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/update"
 	"golang.org/x/term"
 )
 
-var version = "0.2.1"
+var version = "0.3.0"
 
 const helpText = `Spotify TUI (Go interface + Rust helper)
 
@@ -31,6 +35,11 @@ Commands:
   login [--no-browser]      Browser PKCE authorization for library/search
   provider-key             Save a personal Soloist API key securely
   connect                  Start/connect the local playback helper
+  tray                     Run the Linux tray companion
+  tray-stop                Quit the tray, keep audio
+  update                   Download and install the latest stable release
+  check-updates            Check the latest stable release
+  --no-tray                Open TUI without starting a tray
   doctor                   Show installation and provider status
   check-account            Check real library/search access
   check-playback           Briefly test local audio controls, then pause
@@ -67,6 +76,23 @@ func run() error {
 	manager := auth.New(cfg, p)
 	player := ipc.New(p)
 	args := os.Args[1:]
+	noTray := false
+	resumeURI := ""
+	var resumePosition int64
+	if len(args) > 0 && args[0] == "--no-tray" {
+		noTray = true
+		args = args[1:]
+	}
+	if len(args) == 3 && args[0] == "--resume-after-update" {
+		resumeURI = args[1]
+		resumePosition, _ = strconv.ParseInt(args[2], 10, 64)
+		if !strings.HasPrefix(resumeURI, "spotify:track:") {
+			return errors.New("invalid resume track")
+		}
+		args = nil
+	}
+	executable, _ := os.Executable()
+
 	if len(args) > 0 {
 		switch args[0] {
 		case "--version", "version":
@@ -129,6 +155,40 @@ func run() error {
 			}
 			fmt.Println("Key stored. In the TUI press c to start Soloist, then pair Spotify TUI Local once.")
 			return nil
+		case "tray":
+			return tray.Run(context.Background(), player, executable)
+		case "tray-stop":
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			return tray.Stop(ctx)
+		case "check-updates", "update":
+			client := update.New(version)
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+			defer cancel()
+			release, e := client.Check(ctx)
+			if e != nil {
+				return e
+			}
+			if release == nil {
+				fmt.Println("Already on the latest stable release:", version)
+				return nil
+			}
+			fmt.Println("Stable update available:", release.Tag)
+			if args[0] == "check-updates" {
+				return nil
+			}
+			installed, e := client.Install(ctx, *release)
+			if e != nil {
+				return e
+			}
+			if e = tray.Stop(ctx); e != nil {
+				return e
+			}
+			if e = player.Stop(ctx); e != nil {
+				return fmt.Errorf("update installed; stop the old helper before reopening: %w", e)
+			}
+			fmt.Println("Installed", installed.Version, "Run:", installed.Executable)
+			return nil
 		case "stop":
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
@@ -163,6 +223,7 @@ func run() error {
 			return nil
 		case "doctor":
 			fmt.Println("spotify-tui", version)
+			fmt.Println("Tray host available:", tray.Available(), "tray running:", tray.Running())
 			fmt.Println("Config:", filepath.Join(p.Config, "config.json"))
 			fmt.Println("Client ID configured:", cfg.ClientID != "")
 			_, e := exec.LookPath(cfg.SoloistPath)
@@ -246,7 +307,36 @@ func run() error {
 			return fmt.Errorf("unknown command %q; use --help", args[0])
 		}
 	}
-	model := ui.New(cfg, p, manager, spotify.New(manager, p), player)
-	_, err = tea.NewProgram(model, tea.WithAltScreen()).Run()
-	return err
+	if !noTray {
+		_ = tray.Ensure(executable)
+	}
+	model := ui.New(cfg, p, manager, spotify.New(manager, p), player).WithUpdater(update.New(version), version)
+	if resumeURI != "" {
+		model = model.WithResume(resumeURI, resumePosition)
+	}
+	result, err := tea.NewProgram(model, tea.WithAltScreen()).Run()
+	if err != nil {
+		return err
+	}
+	finished := result.(ui.Model)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if finished.StopRequested() {
+		return tray.Stop(ctx)
+	}
+	if next := finished.RestartPath(); next != "" {
+		state, _ := player.State(ctx)
+		if err = tray.Stop(ctx); err != nil {
+			return fmt.Errorf("update installed; quit old tray before reopening: %w", err)
+		}
+		if err = player.Stop(ctx); err != nil {
+			return fmt.Errorf("update installed; stop old helper before reopening: %w", err)
+		}
+		nextArgs := []string{next}
+		if state.Status == "playing" && strings.HasPrefix(state.URI, "spotify:track:") {
+			nextArgs = append(nextArgs, "--resume-after-update", state.URI, strconv.FormatInt(state.PositionMS, 10))
+		}
+		return syscall.Exec(next, nextArgs, os.Environ())
+	}
+	return nil
 }

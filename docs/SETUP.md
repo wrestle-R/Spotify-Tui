@@ -71,7 +71,7 @@ If verification fails in the normal browser too, complete Spotify's recovery or 
 
 - Up/Down or `j/k` moves in the focused pane. Left/`h`/Esc returns to the library; Right/`l`/Enter opens a collection. Enter on a song plays it.
 - Tab/Shift-Tab switches panes. Page Up/Down and Home/End act on the focused pane. On narrow terminals, that pane occupies the screen instead of hiding the library.
-- `/` or Ctrl-F searches. Left/Right, Home/End, Delete and Backspace edit the query; Ctrl-U clears it, Ctrl-W deletes a word. Enter searches and Esc cancels without replacing your collection.
+- `/` or Ctrl-F searches. Left/Right, Home/End, Delete and Backspace edit the query; Ctrl-G clears it, Ctrl-W deletes a word. Enter searches and Esc cancels without replacing your collection.
 - Space pauses/resumes. `n/p` or Ctrl-Right/Left skips tracks; `[/]` or Alt-Left/Right seeks five seconds; `+/-` adjusts volume.
 - `a` appends the selected song; `P` plays the open playlist from its start; `s` toggles shuffle and `r` cycles repeat.
 - `R`/Ctrl-R refreshes the focused pane. `c` reconnects; `L` signs in through the browser; `?`/F1 opens help.
@@ -90,3 +90,13 @@ SPOTIFY_TUI_TEST_HELPER="$PWD/dist/spotify-tui-playback" make test
 ```
 
 The last command runs Go against the real compiled Rust helper with a deliberately unavailable provider. It verifies capabilities, communication, offline rejection, and shutdown without an account. Rust also tests its WebSocket bridge against a synthetic local provider. These are integration checks, not proof of Spotify audio or offline entitlement.
+
+## Tray and updates
+
+The normal TUI starts a pure-Go StatusNotifierItem companion automatically. No GTK or extra tray binary is required. It needs a desktop panel with a StatusNotifier watcher: for example Quickshell's tray on Hyprland. GNOME may require an AppIndicator extension. We do not change panel configuration. `spotify-tui doctor` reports host availability and whether the companion is running. `--no-tray` skips automatic startup.
+
+Left-click opens a terminal TUI. The context menu offers Open, Pause/Resume, Next, Previous, Stop audio and quit tray, and Quit tray while keeping audio. Terminal choices are Kitty, Foot, Alacritty, Konsole, GNOME Terminal and xterm. `spotify-tui tray` runs the singleton companion; `tray-stop` stops it. `q` keeps it and audio running. `Q` stops both.
+
+The TUI checks GitHub's latest stable release in the background at startup. It does not install automatically. Ctrl-U checks again or installs the offered update, verifies the archive SHA-256, ELF architecture and matching Go/Rust version, then restarts. Playing tracks are requested again with their prior position after helper restart, subject to Spotify connectivity. Playback can be interrupted while restarting. Ctrl-G clears a search field; Ctrl-U is reserved globally for updating.
+
+Use `spotify-tui check-updates` or `spotify-tui update` outside the UI. Public releases need only network access; authenticated `gh` is a fallback for private repository access or API restrictions. Only Linux x86_64 and ordinary stable versions are accepted. Updates require a managed installation from `install.sh`, and refuse unrelated files or command symlinks. Old builds remain available for rollback. A single `lib/spotify-tui/current` pointer activates both binaries; installations and updates share a lock. Config, keyring and provider data are not modified. Archives are checksum-verified, not signed.

@@ -110,6 +110,12 @@ func (d *demoPlayer) Call(_ context.Context, method string, params any, _ any) e
 		}
 	case "play_collection":
 		choose(0)
+	case "toggle_pause":
+		if d.state.Status == "playing" {
+			d.state.Status = "paused"
+		} else {
+			d.state.Status = "playing"
+		}
 	case "pause":
 		d.state.Status = "paused"
 	case "resume":

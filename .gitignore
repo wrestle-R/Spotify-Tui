@@ -5,3 +5,7 @@
 .env
 .env.*
 !.env.example
+/next/node_modules/
+/next/.next/
+/next/out/
+/next/tsconfig.tsbuildinfo

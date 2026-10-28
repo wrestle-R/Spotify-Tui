@@ -1,6 +1,6 @@
 import hashlib,io,os,pathlib,shutil,subprocess,tarfile,tempfile
 root=pathlib.Path(__file__).resolve().parents[2];os.chdir(root)
-version='0.2.1';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
+version='0.3.0';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
 base=pathlib.Path(tempfile.mkdtemp(prefix='release test ',dir=root/'work'))
 fake=base/'fakebin';fake.mkdir();gh=fake/'gh'
 gh.write_text('''#!/usr/bin/env bash
@@ -12,6 +12,7 @@ done
 cp "$FIXTURE_DIR/$FIXTURE_ARCHIVE" "$out/$FIXTURE_ARCHIVE"
 cp "$FIXTURE_DIR/SHA256SUMS" "$out/SHA256SUMS"
 ''');gh.chmod(0o755)
+(fake/'curl').write_text('#!/bin/sh\nexit 22\n');(fake/'curl').chmod(0o755)
 env=os.environ.copy();env['PATH']=str(fake)+os.pathsep+env['PATH'];env['FIXTURE_ARCHIVE']=archive
 for key in ['XDG_CONFIG_HOME','XDG_DATA_HOME','XDG_CACHE_HOME','XDG_STATE_HOME','XDG_RUNTIME_DIR']:env[key]=str(base/key)
 fixture=base/'fixtures';fixture.mkdir();env['FIXTURE_DIR']=str(fixture)
@@ -42,7 +43,7 @@ p=subprocess.run(['bash','scripts/download-linux.sh','--destination',str(existin
 assert p.returncode!=0 and (existing/'keep').read_text()=='keep'
 prefix=base/'install prefix'
 subprocess.run(['bash',str(valid/'install.sh'),'--prefix',str(prefix)],check=True,capture_output=True)
-assert subprocess.check_output([str(prefix/'bin/spotify-tui'),'version'],text=True,env=env).strip()=='spotify-tui 0.2.1'
-assert subprocess.check_output([str(prefix/'bin/spotify-tui-playback'),'--version'],text=True,env=env).strip()=='spotify-tui-playback 0.2.1'
+assert subprocess.check_output([str(prefix/'bin/spotify-tui'),'version'],text=True,env=env).strip()==f'spotify-tui {version}'
+assert subprocess.check_output([str(prefix/'bin/spotify-tui-playback'),'--version'],text=True,env=env).strip()==f'spotify-tui-playback {version}'
 subprocess.run(['bash',str(valid/'install.sh'),'--prefix',str(prefix)],check=True,capture_output=True)
 print('Linux archive download, checksum failure, path/link rejection, overwrite refusal, temp cleanup, package installation/upgrade and version pairing (paths with spaces): PASS')
