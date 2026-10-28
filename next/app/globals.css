@@ -426,36 +426,263 @@ h2 {
 .honest > a {
   white-space: nowrap;
 }
-.footer {
-  border-top: 1px solid var(--line);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 35px 40px;
+/* The final sleeve: an editorial close with a CSS vinyl record. */
+.site-footer {
+  position: relative;
+  overflow: clip;
+  background: #0b0e0c;
+  border-top: 1px solid #26382b;
+}
+.footer-inner {
+  padding-top: 42px;
+}
+.footer-sleeve {
+  position: relative;
+  isolation: isolate;
+  min-height: 420px;
+  overflow: hidden;
+  background: #101911;
+  border: 1px solid #2e4933;
+  border-radius: 3px;
+}
+.footer-sleeve::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 5% 110%, #174a2666, transparent 60%),
+    linear-gradient(115deg, transparent 50%, #274d2c1c);
+}
+.footer-editorial {
+  position: relative;
+  z-index: 2;
+  padding: 37px 43px 62px;
+  width: 59%;
+}
+.footer-kicker {
   display: flex;
   align-items: center;
-  gap: 35px;
-  flex-wrap: wrap;
+  gap: 12px;
+  font: 10px var(--mono);
+  color: #98b19c;
+  letter-spacing: -0.1px;
 }
-.footer .brand {
-  font-size: 20px;
-  gap: 0;
+.footer-kicker > span {
+  color: var(--green);
+  font-size: 17px;
 }
-.footer > p {
-  font-size: 11px;
-  color: var(--muted);
-  margin: 0;
+.footer-editorial h2 {
+  margin: 27px 0 30px;
+  font-size: clamp(66px, 8.4vw, 106px);
+  line-height: 0.88;
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  color: #e2efdf;
 }
-.footer > div {
-  margin-left: auto;
+.footer-editorial h2 > span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.07em;
+  color: #a9d8a1;
+}
+.footer-action-row {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+}
+.footer-download {
+  display: inline-flex;
+  gap: 25px;
+  align-items: center;
+  padding: 12px 17px;
+  border-radius: 3px;
+  background: #c1e5b9;
+  color: #102414;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.footer-download svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.footer-download:hover {
+  background: #def5d6;
+  color: #102414;
+  transform: translateY(-2px);
+}
+.footer-download:active {
+  transform: translateY(0);
+}
+.footer-platform {
+  font: 8px/1.8 var(--mono);
+  color: #809b85;
+  letter-spacing: 0.5px;
+}
+.footer-record-scene {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  right: -36px;
+  width: 470px;
+  height: 470px;
+  transform: rotate(-18deg);
+}
+.footer-record-shadow {
+  position: absolute;
+  inset: 25px -10px -35px 25px;
+  border-radius: 50%;
+  background: #000b;
+  filter: blur(22px);
+}
+.footer-record {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #344237;
+  box-shadow:
+    inset 0 0 0 3px #0a0e0a,
+    inset 0 0 0 5px #293129,
+    inset 0 0 28px #000b;
+  background:
+    repeating-radial-gradient(
+      circle at center,
+      transparent 0 2px,
+      #75837416 2.5px 3px,
+      transparent 3.5px 5px
+    ),
+    conic-gradient(
+      from 20deg,
+      #0a0e0b,
+      #303c31 14%,
+      #101811 24%,
+      #030704 44%,
+      #2c392e 61%,
+      #0a100c 75%,
+      #3a483b 91%,
+      #0a0e0b
+    );
+  transition: transform 1.2s cubic-bezier(0.2, 0.6, 0.3, 1);
+}
+.footer-sleeve:hover .footer-record {
+  transform: rotate(22deg);
+}
+.footer-record-label {
+  position: absolute;
+  inset: 32%;
+  border-radius: 50%;
+  border: 1px solid #a3c995;
+  background: #b3d4a5;
+  box-shadow:
+    0 0 0 5px #030b05,
+    0 0 0 6px #50664b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.footer-record-label img {
+  width: 58px;
+  height: 58px;
+  mix-blend-mode: multiply;
+  filter: brightness(0.24) saturate(0.2);
+}
+.footer-record-type {
+  font: 6px var(--mono);
+  color: #30462c;
+  letter-spacing: 0.9px;
+}
+.footer-record-hole {
+  width: 9px;
+  height: 9px;
+  background: #0a120a;
+  border: 2px solid #66805a;
+  border-radius: 50%;
+  position: absolute;
+  left: calc(50% - 4.5px);
+  top: calc(50% - 4.5px);
+}
+.footer-sleeve-index {
+  position: absolute;
+  bottom: 18px;
+  left: 43px;
+  color: #627b66;
+  font: 7px var(--mono);
+  letter-spacing: 1.2px;
+  z-index: 2;
+}
+.footer-directory {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 28px 0 24px;
+}
+.footer-small-brand {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: #c4d6c9;
+  font:
+    500 13px "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.4px;
+}
+.footer-directory nav {
   display: flex;
   gap: 27px;
-  font-size: 11px;
+  margin-left: auto;
+  color: #8ea093;
+  font-size: 10px;
 }
-.footer small {
-  width: 100%;
-  font-size: 9px;
-  color: #687b6e;
-  letter-spacing: 0.2px;
+.footer-directory nav a {
+  transition: color 0.2s;
+}
+.footer-directory nav a:hover {
+  color: #d5e8d2;
+}
+.footer-directory nav a span {
+  margin-left: 4px;
+}
+.footer-top {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid #344638;
+  border-radius: 50%;
+  color: #b1c7b8;
+  font-size: 14px;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.footer-top:hover {
+  border-color: #a7c49e;
+  background: #19291e;
+}
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0 25px;
+  border-top: 1px solid #26362b;
+  color: #64796b;
+  font: 8px/1.8 var(--mono);
+}
+.footer-bottom > span:nth-child(2) {
+  max-width: 310px;
+}
+.footer-made {
+  text-align: right;
 }
 .skip {
   position: absolute;
@@ -764,6 +991,17 @@ td {
     left: 26%;
   }
 }
+@media (min-width: 761px) and (max-width: 1000px) {
+  .footer-record-scene {
+    width: 390px;
+    height: 390px;
+    right: -90px;
+    top: 45px;
+  }
+  .footer-editorial {
+    width: 66%;
+  }
+}
 @media (max-width: 760px) {
   .wrap {
     padding-left: 24px;
@@ -927,19 +1165,88 @@ td {
     display: block;
     margin-top: 20px;
   }
-  .footer {
-    margin: 0 24px;
-    padding: 25px 0;
-    gap: 14px 24px;
+  .footer-inner {
+    padding-top: 24px;
   }
-  .footer > div {
+  .footer-sleeve {
+    min-height: 570px;
+  }
+  .footer-editorial {
+    padding: 27px 25px 0;
     width: 100%;
-    margin: 0;
-    justify-content: flex-start;
-    gap: 25px;
   }
-  .footer small {
+  .footer-kicker {
     font-size: 8px;
+    gap: 8px;
+  }
+  .footer-editorial h2 {
+    font-size: clamp(52px, 17vw, 67px);
+    margin: 21px 0 26px;
+  }
+  .footer-action-row {
+    gap: 20px;
+  }
+  .footer-download {
+    font-size: 11px;
+    gap: 20px;
+    padding: 11px 15px;
+  }
+  .footer-platform {
+    font-size: 7px;
+  }
+  .footer-record-scene {
+    width: 310px;
+    height: 310px;
+    top: 300px;
+    right: -56px;
+  }
+  .footer-record-label {
+    gap: 6px;
+  }
+  .footer-record-label img {
+    width: 40px;
+    height: 40px;
+  }
+  .footer-record-type {
+    font-size: 4px;
+    letter-spacing: 0.5px;
+  }
+  .footer-sleeve-index {
+    bottom: 18px;
+    left: 25px;
+    max-width: 86px;
+    font-size: 6px;
+    line-height: 1.8;
+  }
+  .footer-directory {
+    flex-wrap: wrap;
+    gap: 22px;
+    padding: 24px 0 21px;
+  }
+  .footer-directory nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 14px;
+    font-size: 10px;
+  }
+  .footer-top {
+    margin-left: auto;
+  }
+  .footer-bottom {
+    flex-wrap: wrap;
+    gap: 13px;
+    font-size: 7px;
+    padding-bottom: 23px;
+  }
+  .footer-bottom > span:nth-child(2) {
+    order: 3;
+    width: 100%;
+    max-width: 270px;
+  }
+  .footer-made {
+    margin-left: auto;
+    max-width: 145px;
   }
   .desktop {
     display: none;

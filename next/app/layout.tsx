@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { repo } from "@/lib/releases";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 export const metadata: Metadata = {
   title: {
@@ -36,19 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </nav>
         </header>
         {children}
-        <footer className="footer">
-          <Link href="/" className="brand">
-            spotify<span className="brand-light">tui.</span>
-          </Link>
-          <p>Made coz RAM matters.</p>
-          <div>
-            <Link href="/docs">Get started</Link>
-            <a href={repo}>Source ↗</a>
-          </div>
-          <small>
-            An independent project. Not affiliated with or endorsed by Spotify.
-          </small>
-        </footer>
+        <Footer />
       </body>
     </html>
   );
