@@ -1,10 +1,27 @@
 # What's new
 
-Features and fixes, grouped by release series, newest first. Full details, upgrade instructions and validation live on each version's page. GitHub hosts the Linux downloads.
+Features and fixes, grouped by release series, newest first. Full details, upgrade instructions and validation live on each version's page. GitHub hosts the Linux and Apple Silicon Mac downloads.
 
-**Latest stable: [v0.3.1](#v031)** · Stable releases only
+**Latest stable: [v0.4.0](#v040)** · Stable releases only
 
-[Download archive ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.3.1)
+[Download archive ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.4.0)
+
+## 0.4.x
+
+**Spotify TUI on Apple Silicon Mac**
+
+<a id="v040"></a>
+
+### v0.4.0
+
+28 October 2026 · **Stable** · Linux x86_64 and Apple Silicon macOS
+
+- Add native macOS browser login, a short private socket path and native archive/update validation.
+- Use a portable installer/downloader with checksums, safe extraction and matching Go/Rust activation.
+- Gate releases on native Linux, macOS 15 and macOS 26 build/test/package/terminal checks.
+- Keep Soloist separate, the tray Linux-only, and real Mac account/audio verification explicitly unclaimed.
+
+[Apple Silicon Mac ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_darwin_arm64.tar.gz) · [Linux ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_linux_amd64.tar.gz) · [Full details →](docs/releases/v0.4.0.md)
 
 ## 0.3.x
 
@@ -14,7 +31,7 @@ Features and fixes, grouped by release series, newest first. Full details, upgra
 
 ### v0.3.1
 
-28 October 2026 · **Stable** · **Latest stable** · Linux x86_64
+28 October 2026 · **Stable** · Linux x86_64
 
 - Add the Next.js website under `next/`: glass logo, landing page, step-by-step account setup and a changelog with release detail pages.
 - Keep playback restoration marked busy after an update, so keyboard requests cannot race the initial play/seek operation.

@@ -1,3 +1,7 @@
+# Platform note
+
+Apple Silicon Mac users: follow [macOS setup](MACOS.md). Linux setup below uses the same account/provider flow. Soloist has a separate official Mac arm64 build. The Linux tray and namespace offline probe are not macOS features.
+
 # Run the development build
 
 This is the initial Go/Rust implementation. Offline Spotify downloads remain unsupported and the complete product is not accepted. Real account, local playback, and a clean online restart passed on the development machine; the isolated offline cold start failed. Fresh installations require your own account and provider setup. Automated tests use synthetic data.

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -19,6 +20,10 @@ import (
 // OfflineProbe isolates only this app's playback processes, then restores the
 // normal online helper. It does not download media or change host networking.
 func (c *Client) OfflineProbe(ctx context.Context, cfg config.Config, p config.Paths, vault auth.Vault, uri string, out io.Writer) error {
+	if runtime.GOOS != "linux" {
+		return errors.New("isolated offline probe uses Linux namespaces; Spotify offline downloads remain unsupported on macOS")
+	}
+
 	state, err := c.State(ctx)
 	if err != nil {
 		return err

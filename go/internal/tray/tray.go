@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -101,6 +102,9 @@ func pixmaps() ([]Pixmap, error) {
 }
 func connect() (*dbus.Conn, error) { return dbus.ConnectSessionBus() }
 func Available() bool {
+	if runtime.GOOS != "linux" {
+		return false
+	}
 	conn, e := connect()
 	if e != nil {
 		return false
@@ -112,6 +116,9 @@ func Available() bool {
 	return conn.BusObject().CallWithContext(ctx, "org.freedesktop.DBus.GetNameOwner", 0, watcher).Store(&owner) == nil
 }
 func Running() bool {
+	if runtime.GOOS != "linux" {
+		return false
+	}
 	conn, e := connect()
 	if e != nil {
 		return false
@@ -123,6 +130,9 @@ func Running() bool {
 	return conn.BusObject().CallWithContext(ctx, "org.freedesktop.DBus.NameHasOwner", 0, Name).Store(&exists) == nil && exists
 }
 func Stop(ctx context.Context) error {
+	if runtime.GOOS != "linux" {
+		return nil
+	}
 	conn, e := connect()
 	if e != nil {
 		return nil
@@ -147,6 +157,9 @@ func Stop(ctx context.Context) error {
 	}
 }
 func Ensure(executable string) error {
+	if runtime.GOOS != "linux" {
+		return nil
+	}
 	if Running() {
 		return nil
 	}
@@ -328,6 +341,9 @@ func (s *Service) refresh() {
 	}
 }
 func Run(ctx context.Context, player *ipc.Client, executable string) error {
+	if runtime.GOOS != "linux" {
+		return errors.New("the StatusNotifier tray is Linux-only; the macOS terminal player works without a tray")
+	}
 	conn, err := connect()
 	if err != nil {
 		return err

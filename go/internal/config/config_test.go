@@ -35,3 +35,22 @@ func TestEnsureRejectsSymlinkDirectory(t *testing.T) {
 		t.Fatal("symlink accepted")
 	}
 }
+
+func TestRuntimePathHonoursExplicitXDGAndStaysPrivate(t *testing.T) {
+	runtimeDir := t.TempDir()
+	t.Setenv("XDG_RUNTIME_DIR", runtimeDir)
+	paths, err := PathsForUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if paths.Runtime != filepath.Join(runtimeDir, "spotify-tui") {
+		t.Fatal(paths.Runtime)
+	}
+	if err = paths.Ensure(); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(paths.Runtime)
+	if err != nil || info.Mode().Perm() != 0700 {
+		t.Fatal("runtime directory not private")
+	}
+}

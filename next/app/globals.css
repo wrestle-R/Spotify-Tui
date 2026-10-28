@@ -157,6 +157,7 @@ em {
 }
 .actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 25px;
   margin-top: 31px;

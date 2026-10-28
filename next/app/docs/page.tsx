@@ -41,7 +41,7 @@ export default function Docs() {
           <h2>Before you start</h2>
           <ul>
             <li>
-              Linux x86_64 with glibc 2.39 or newer. Tested on Arch Linux.
+              Linux x86_64 with glibc 2.39+, or Apple Silicon Mac with macOS 15+. Python 3.9+ for installation.
             </li>
             <li>
               Spotify Premium to generate your own personal Soloist key. Don’t
@@ -52,8 +52,7 @@ export default function Docs() {
               a working desktop keyring.
             </li>
             <li>
-              PipeWire or PulseAudio for sound. A StatusNotifier tray host for
-              the optional tray.
+              Linux uses PipeWire or PulseAudio. macOS uses the official Soloist Mac build. The optional StatusNotifier tray is Linux-only.
             </li>
           </ul>
           <p>
@@ -63,19 +62,18 @@ export default function Docs() {
         </section>
         <section id="install">
           <span className="step">01 / INSTALL</span>
-          <h2>Download the Linux release</h2>
+          <h2>Download your platform release</h2>
           <p>
-            <a href={download()}>Download {latest()} for Linux x86_64 ↓</a>, or
-            use the commands below. The downloader verifies SHA-256 before
+            <a href={download()}>Linux x86_64 ↓</a> or <a href={download("darwin_arm64")}>Apple Silicon Mac ↓</a> ({latest()}). You can also use the commands below. The downloader verifies SHA-256 before
             extracting. Read the script before running it.
           </p>
-          <Code>{`curl -fL https://github.com/wrestle-R/Spotify-Tui/releases/download/${latest()}/download-linux.sh -o download-linux.sh
-less download-linux.sh
-bash download-linux.sh --destination ./spotify-tui-linux
-bash ./spotify-tui-linux/install.sh
+          <Code>{`curl -fL https://github.com/wrestle-R/Spotify-Tui/releases/download/${latest()}/download.py -o download.py
+less download.py
+python3 download.py download --destination ./spotify-tui-download
+bash ./spotify-tui-download/install.sh
 ~/.local/bin/spotify-tui --demo`}</Code>
           <p>
-            No sudo. The installer puts both binaries under{" "}
+            Mac binaries are ad-hoc signed, not Apple-notarized. Intel Macs are not supported in this release. No sudo. The installer puts both binaries under{" "}
             <code>~/.local</code>. The demo uses sample music and makes no
             sound. Add <code>~/.local/bin</code> to your PATH if you want to run{" "}
             <code>spotify-tui</code> directly.

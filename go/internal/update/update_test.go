@@ -10,20 +10,25 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
 
 func packageFixture(t *testing.T, version string) []byte {
 	t.Helper()
-	binary, err := os.ReadFile("/bin/true")
+	self, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	binary, err := os.ReadFile(self)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var out bytes.Buffer
 	gz := gzip.NewWriter(&out)
 	tw := tar.NewWriter(gz)
-	root := "spotify-tui_" + version + "_linux_amd64/"
+	root := strings.TrimSuffix(archiveName(version, runtime.GOOS, runtime.GOARCH), ".tar.gz") + "/"
 	for _, name := range []string{"spotify-tui", "spotify-tui-playback"} {
 		if err = tw.WriteHeader(&tar.Header{Name: root + name, Mode: 0755, Size: int64(len(binary))}); err != nil {
 			t.Fatal(err)
@@ -59,7 +64,7 @@ func installed(t *testing.T) (string, string) {
 func fixtureClient(t *testing.T, corrupt bool) (*Client, string) {
 	prefix, exe := installed(t)
 	archive := packageFixture(t, "0.3.0")
-	checksum := fmt.Sprintf("%x  spotify-tui_0.3.0_linux_amd64.tar.gz\n", sha256.Sum256(archive))
+	checksum := fmt.Sprintf("%x  %s\n", sha256.Sum256(archive), archiveName("0.3.0", runtime.GOOS, runtime.GOARCH))
 	if corrupt {
 		archive = append(archive, 'x')
 	}
@@ -160,7 +165,7 @@ func TestStableCheckAndNumericVersions(t *testing.T) {
 	}
 	c := New("0.2.1")
 	c.Fetch = func(ctx context.Context, url string, w io.Writer, limit int64) error {
-		_, err := io.WriteString(w, `{"tag_name":"v0.3.0","assets":[{"name":"spotify-tui_0.3.0_linux_amd64.tar.gz"},{"name":"SHA256SUMS"}]}`)
+		_, err := fmt.Fprintf(w, `{"tag_name":"v0.3.0","assets":[{"name":%q},{"name":"SHA256SUMS"}]}`, archiveName("0.3.0", runtime.GOOS, runtime.GOARCH))
 		return err
 	}
 	r, err := c.Check(context.Background())

@@ -24,7 +24,7 @@ import (
 	"golang.org/x/term"
 )
 
-var version = "0.3.1"
+var version = "0.4.0"
 
 const helpText = `Spotify TUI (Go interface + Rust helper)
 
@@ -58,6 +58,16 @@ func main() {
 	}
 }
 func run() error {
+	if len(os.Args) == 2 {
+		switch os.Args[1] {
+		case "version", "--version":
+			fmt.Println("spotify-tui", version)
+			return nil
+		case "help", "--help":
+			fmt.Print(helpText)
+			return nil
+		}
+	}
 	if len(os.Args) > 1 && (os.Args[1] == "--demo" || os.Args[1] == "demo") {
 		_, err := tea.NewProgram(ui.NewDemo(), tea.WithAltScreen()).Run()
 		return err

@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -278,8 +279,15 @@ func (m *Manager) Login(ctx context.Context, open func(string) error, notice io.
 	}
 }
 func OpenBrowser(link string) error {
-	cmd := exec.Command("xdg-open", link)
+	cmd := exec.Command(browserExecutable(runtime.GOOS), link)
 	cmd.Stdout = io.Discard
 	cmd.Stderr = io.Discard
 	return cmd.Run()
+}
+
+func browserExecutable(goos string) string {
+	if goos == "darwin" {
+		return "open"
+	}
+	return "xdg-open"
 }

@@ -2,31 +2,31 @@
 
 So Spotify was taking up way too much RAM and I just wanted to play my playlists. I made a terminal player coz I don't need a whole desktop app sitting there while I'm working.
 
-Go for the TUI, Rust for the local playback helper. **Linux only for now.** The download is for x86_64, tested on Arch Linux.
+Go for the TUI, Rust for the local playback helper. **Linux x86_64 and Apple Silicon macOS.** Go/Rust releases are built and checked on native GitHub runners. macOS setup and verification limits are in [the Mac guide](docs/MACOS.md).
 
 ![Spotify TUI running in a terminal on Arch Linux](design/tui-screenshot.png)
 
 Actual terminal capture of `--demo`, using generic sample playlists and songs. The demo produces no audio and reads no account data.
 
-[What's new](CHANGELOG.md) · [Full release details](docs/releases/v0.3.1.md)
+[What's new](CHANGELOG.md) · [Full release details](docs/releases/v0.4.0.md)
 
 ## Download
 
-**[Download for Linux x86_64](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.3.1/spotify-tui_0.3.1_linux_amd64.tar.gz)** · [Release notes and checksums](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.3.1)
+**[Download for Linux x86_64](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_linux_amd64.tar.gz)** · **[Download for Apple Silicon Mac](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/spotify-tui_0.4.0_darwin_arm64.tar.gz)** · [Release notes and checksums](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.4.0)
 
- The archive includes the TUI, Rust helper and local installer. It needs glibc 2.39 or newer, a Spotify Premium account and separate [Soloist setup](docs/SETUP.md#local-playback-through-official-soloist). Soloist comes from Spotify and isn't bundled here.
+The archive includes the TUI, Rust helper and local installer. Linux needs glibc 2.39+; Mac needs Apple Silicon and macOS 15+. Both need a Premium account and separate [Soloist setup](docs/SETUP.md#local-playback-through-official-soloist). Soloist comes from Spotify and isn't bundled here. macOS binaries are ad-hoc signed, not Apple-notarized.
 
 The repo and downloads are public:
 
 ```bash
-curl -fL https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.3.1/download-linux.sh -o download-linux.sh
-less download-linux.sh
-bash download-linux.sh --destination ./spotify-tui-linux
-bash ./spotify-tui-linux/install.sh
+curl -fL https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.4.0/download.py -o download.py
+less download.py
+python3 download.py download --destination ./spotify-tui-download
+bash ./spotify-tui-download/install.sh
 ~/.local/bin/spotify-tui
 ```
 
-The downloader verifies SHA-256 before extraction and prints where it saved the files. Installation goes under `~/.local`; it doesn't need sudo. It keeps previous build directories for rollback. See [downloads](docs/DOWNLOADS.md) for manual verification and a different install prefix.
+Python 3.9+ is needed only for downloading/installing. The downloader verifies SHA-256 before extraction and prints where it saved the files. Installation goes under `~/.local`; it doesn't need sudo. It keeps previous build directories for rollback. See [downloads](docs/DOWNLOADS.md) for manual verification and a different install prefix.
 
 Try the keyboard flow without an account:
 
@@ -47,6 +47,6 @@ Use your own Spotify Developer application's public client ID, register `http://
 
 Sign-in happens in your normal browser. `provider-key` hides the key while you type. Select **Spotify TUI Local** in Spotify's device picker for the initial pairing; you can close the official player afterward. Full [setup instructions](docs/SETUP.md) cover verification, the keyring and pairing.
 
-The Linux tray starts with the player when your panel supports it. `q` leaves music playing; `Q` stops music and exits the tray. The app checks stable updates on startup; **Ctrl-U** installs a verified update and restarts. [Tray and update help](docs/SETUP.md#tray-and-updates).
+The Linux tray starts with the player when your panel supports it. macOS runs the terminal player without a tray. `q` leaves music playing; `Q` stops music and exits the tray. The app checks stable updates on startup; **Ctrl-U** installs a verified update and restarts. [Tray and update help](docs/SETUP.md#tray-and-updates).
 
 The [website source](next/) includes the landing page, account setup guide and changelog. See [website instructions](next/README.md) to run it locally.

@@ -24,7 +24,7 @@ export function release(version: string) {
     "utf8",
   );
 }
-export function download() {
+export function download(target: "linux_amd64" | "darwin_arm64" = "linux_amd64") {
   const v = latest();
-  return `${repo}/releases/download/${v}/spotify-tui_${v.slice(1)}_linux_amd64.tar.gz`;
+  return `${repo}/releases/download/${v}/spotify-tui_${v.slice(1)}_${target}.tar.gz`;
 }

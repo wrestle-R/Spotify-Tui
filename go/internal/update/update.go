@@ -8,6 +8,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"debug/elf"
+	"debug/macho"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -40,7 +41,7 @@ type Release struct {
 }
 
 func (r Release) Version() string { return strings.TrimPrefix(r.Tag, "v") }
-func (r Release) Archive() string { return "spotify-tui_" + r.Version() + "_linux_amd64.tar.gz" }
+func (r Release) Archive() string { return archiveName(r.Version(), runtime.GOOS, runtime.GOARCH) }
 
 type Installation struct{ Version, Executable string }
 type Client struct {
@@ -129,6 +130,9 @@ func fetch(ctx context.Context, url string, out io.Writer, limit int64) error {
 	return nil
 }
 func (c *Client) Check(ctx context.Context) (*Release, error) {
+	if !supportedTarget(runtime.GOOS, runtime.GOARCH) {
+		return nil, errors.New("updates support Linux x86_64 and Apple Silicon macOS")
+	}
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 	buf := &cappedBuffer{max: 1 << 20}
@@ -162,7 +166,7 @@ func (c *Client) Check(ctx context.Context) (*Release, error) {
 	}
 	for _, found := range required {
 		if !found {
-			return nil, errors.New("latest release is missing the Linux archive or checksums")
+			return nil, errors.New("latest release is missing this platform archive or checksums")
 		}
 	}
 	return &r, nil
@@ -341,8 +345,8 @@ func activate(prefix, stage string) error {
 }
 func (c *Client) Install(ctx context.Context, r Release) (Installation, error) {
 	var result Installation
-	if runtime.GOOS != "linux" || runtime.GOARCH != "amd64" {
-		return result, errors.New("updates currently support Linux x86_64 only")
+	if !supportedTarget(runtime.GOOS, runtime.GOARCH) {
+		return result, errors.New("updates support Linux x86_64 and Apple Silicon macOS")
 	}
 	if !stable.MatchString(r.Tag) || !Newer(r.Tag, c.Current) {
 		return result, errors.New("only a newer stable release can be installed")
@@ -399,7 +403,7 @@ func (c *Client) Install(ctx context.Context, r Release) (Installation, error) {
 	if err = verifyChecksum(temp, r); err != nil {
 		return result, err
 	}
-	root := "spotify-tui_" + r.Version() + "_linux_amd64"
+	root := strings.TrimSuffix(r.Archive(), ".tar.gz")
 	unpacked := filepath.Join(temp, "unpacked")
 	if err = extract(filepath.Join(temp, r.Archive()), unpacked, root); err != nil {
 		return result, err
@@ -407,14 +411,8 @@ func (c *Client) Install(ctx context.Context, r Release) (Installation, error) {
 	source := filepath.Join(unpacked, root)
 	for _, name := range []string{"spotify-tui", "spotify-tui-playback"} {
 		binary := filepath.Join(source, name)
-		f, e := elf.Open(binary)
-		if e != nil {
-			return result, fmt.Errorf("invalid Linux executable: %s", name)
-		}
-		valid := f.Machine == elf.EM_X86_64 && f.Class == elf.ELFCLASS64
-		f.Close()
-		if !valid {
-			return result, errors.New("release executable architecture mismatch")
+		if e := verifyExecutable(binary, runtime.GOOS, runtime.GOARCH); e != nil {
+			return result, fmt.Errorf("%s: %w", name, e)
 		}
 		args := []string{"--version"}
 		if name == "spotify-tui" {
@@ -449,4 +447,36 @@ func (c *Client) Install(ctx context.Context, r Release) (Installation, error) {
 	}
 	keep = true
 	return Installation{Version: r.Version(), Executable: filepath.Join(prefix, "bin", "spotify-tui")}, nil
+}
+
+func supportedTarget(goos, arch string) bool {
+	return goos == "linux" && arch == "amd64" || goos == "darwin" && arch == "arm64"
+}
+func archiveName(version, goos, arch string) string {
+	return "spotify-tui_" + version + "_" + goos + "_" + arch + ".tar.gz"
+}
+func verifyExecutable(path, goos, arch string) error {
+	if !supportedTarget(goos, arch) {
+		return errors.New("unsupported executable platform")
+	}
+	valid := false
+	if goos == "darwin" {
+		f, err := macho.Open(path)
+		if err != nil {
+			return errors.New("invalid macOS Mach-O executable")
+		}
+		defer f.Close()
+		valid = f.Cpu == macho.CpuArm64 && f.Type == macho.TypeExec
+	} else {
+		f, err := elf.Open(path)
+		if err != nil {
+			return errors.New("invalid Linux ELF executable")
+		}
+		defer f.Close()
+		valid = f.Machine == elf.EM_X86_64 && f.Class == elf.ELFCLASS64 && (f.Type == elf.ET_EXEC || f.Type == elf.ET_DYN)
+	}
+	if !valid {
+		return errors.New("release executable architecture mismatch")
+	}
+	return nil
 }

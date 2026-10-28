@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strconv"
 )
 
 type Config struct {
@@ -29,8 +31,11 @@ func PathsForUser() (Paths, error) {
 		return filepath.Join(home, fallback, "spotify-tui")
 	}
 	p := Paths{Config: xdg("XDG_CONFIG_HOME", ".config"), Data: xdg("XDG_DATA_HOME", ".local/share"), Cache: xdg("XDG_CACHE_HOME", ".cache"), State: xdg("XDG_STATE_HOME", ".local/state")}
-	if runtime := os.Getenv("XDG_RUNTIME_DIR"); filepath.IsAbs(runtime) {
-		p.Runtime = filepath.Join(runtime, "spotify-tui")
+	if runtimeDir := os.Getenv("XDG_RUNTIME_DIR"); filepath.IsAbs(runtimeDir) {
+		p.Runtime = filepath.Join(runtimeDir, "spotify-tui")
+	} else if runtime.GOOS == "darwin" {
+		// Darwin Unix sockets have a short path limit; HOME can be very long.
+		p.Runtime = filepath.Join(os.TempDir(), "stui-"+strconv.Itoa(os.Getuid()))
 	} else {
 		p.Runtime = filepath.Join(p.State, "run")
 	}

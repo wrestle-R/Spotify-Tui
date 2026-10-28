@@ -1,6 +1,6 @@
 .PHONY: build test check package package-check clean
 
-VERSION ?= 0.3.1
+VERSION ?= 0.4.0
 
 build:
 	mkdir -p dist
@@ -20,10 +20,10 @@ check:
 	cargo clippy --manifest-path rust/Cargo.toml --locked --all-targets -- -D warnings
 
 package: build
-	bash scripts/package-linux.sh $(VERSION)
+	python3 scripts/release.py package --version $(VERSION)
 
 package-check: package
-	python3 scripts/tests/test-linux-download.py
+	python3 scripts/tests/test-release.py
 
 clean:
 	rm -rf dist

@@ -9,3 +9,6 @@
 /next/.next/
 /next/out/
 /next/tsconfig.tsbuildinfo
+
+__pycache__/
+*.py[cod]

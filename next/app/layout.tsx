@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s · Spotify TUI",
   },
   description:
-    "A Spotify terminal player for Linux, built with Go and Rust. Playlists, liked songs and search, with a small tray companion. Made because RAM matters.",
+    "A Spotify terminal player for Linux and Apple Silicon Mac, built with Go and Rust. Playlists, liked songs and search, with a small tray companion. Made because RAM matters.",
   icons: { icon: "/logo-flat.png" },
 };
 export default function Layout({ children }: { children: React.ReactNode }) {

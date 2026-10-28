@@ -8,7 +8,7 @@ export default function Home() {
       <section className="hero wrap">
         <div className="hero-copy">
           <div className="eyebrow">
-            <span className="live-dot" /> {latest()} / BUILT FOR LINUX
+            <span className="live-dot" /> {latest()} / LINUX + APPLE SILICON
           </div>
           <h1>
             All the music.
@@ -24,11 +24,14 @@ export default function Home() {
             <a className="button primary" href={download()}>
               <span aria-hidden="true">↓</span> Download for Linux
             </a>
+            <a className="button" href={download("darwin_arm64")}>
+              <span aria-hidden="true">↓</span> Download for Mac
+            </a>
             <Link href="/docs" className="text-link">
               Get it running <span aria-hidden="true">↗</span>
             </Link>
           </div>
-          <p className="fine">x86_64 · glibc 2.39+ · Premium setup required</p>
+          <p className="fine">Linux x86_64 / Apple Silicon Mac · Premium setup required</p>
         </div>
         <div className="hero-art">
           <div className="orbit orbit-one" />

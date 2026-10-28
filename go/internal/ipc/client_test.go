@@ -12,7 +12,7 @@ import (
 )
 
 func TestMismatchedResponseIsRejected(t *testing.T) {
-	socket := filepath.Join(t.TempDir(), "socket")
+	socket := filepath.Join(shortSocketDir(t), "socket")
 	listener, err := net.Listen("unix", socket)
 	if err != nil {
 		t.Fatal(err)
@@ -38,7 +38,7 @@ func TestRealRustHelperProtocol(t *testing.T) {
 	if helper == "" {
 		t.Skip("set SPOTIFY_TUI_TEST_HELPER to the built Rust binary for cross-language checks")
 	}
-	socket := filepath.Join(t.TempDir(), "player.sock")
+	socket := filepath.Join(shortSocketDir(t), "player.sock")
 	cmd := exec.Command(helper, "serve", "--socket", socket, "--provider-url", "ws://127.0.0.1:9")
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
@@ -87,7 +87,7 @@ func TestSharedProtocolFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	socket := filepath.Join(t.TempDir(), "socket")
+	socket := filepath.Join(shortSocketDir(t), "socket")
 	listener, err := net.Listen("unix", socket)
 	if err != nil {
 		t.Fatal(err)
@@ -128,4 +128,14 @@ func TestSharedProtocolFixture(t *testing.T) {
 	if err := <-done; err != nil {
 		t.Fatal(err)
 	}
+}
+
+func shortSocketDir(t *testing.T) string {
+	t.Helper()
+	dir, err := os.MkdirTemp("/tmp", "stui-test-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+	return dir
 }

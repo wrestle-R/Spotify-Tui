@@ -1,0 +1,130 @@
+name: Native checks and stable releases
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+jobs:
+  native:
+    name: ${{ matrix.runner }} / ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: linux_amd64
+            publish: true
+          - runner: macos-15
+            target: darwin_arm64
+            publish: true
+          - runner: macos-26
+            target: darwin_arm64
+            publish: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: '1.27.1'
+          cache-dependency-path: go/go.sum
+      - name: Install pinned Rust tools
+        run: |
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.99.0
+      - name: Native architecture and tag guard
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import runpy, os
+          r = runpy.run_path('scripts/release.py', run_name='release_guard')
+          assert r['target']() == '${{ matrix.target }}'
+          if os.environ['GITHUB_REF_TYPE'] == 'tag':
+              assert os.environ['GITHUB_REF_NAME'] == 'v' + r['VERSION']
+          PY
+          uname -a
+          go version
+          rustc --version
+      - name: Formatting, static checks and Rust tests
+        run: |
+          make check
+          cargo test --manifest-path rust/Cargo.toml --locked
+      - name: Build native executable pair
+        run: make build VERSION=0.4.0
+      - name: Sign Apple Silicon executables for native execution
+        if: runner.os == 'macOS'
+        run: |
+          codesign --force --sign - dist/spotify-tui dist/spotify-tui-playback
+          codesign --verify --strict dist/spotify-tui
+          codesign --verify --strict dist/spotify-tui-playback
+      - name: Go race and real Go/Rust IPC checks
+        env:
+          SPOTIFY_TUI_TEST_HELPER: ${{ github.workspace }}/dist/spotify-tui-playback
+        run: cd go && go test -race -count=1 ./...
+      - name: Native archive, downloader and installer checks
+        run: |
+          python3 scripts/release.py package --version 0.4.0
+          python3 scripts/tests/test-release.py
+      - name: Actual installed terminal walkthrough
+        shell: bash
+        run: |
+          python3 scripts/release.py install --from dist --prefix "$RUNNER_TEMP/spotify-installed"
+          python3 scripts/tests/smoke-terminal.py "$RUNNER_TEMP/spotify-installed/bin/spotify-tui"
+      - name: Check official provider starts on this architecture
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == macOS ]]; then
+            url=https://soloist-builds.spotifycdn.com/soloist_release_osx_arm64.tar.gz
+          else
+            url=https://soloist-builds.spotifycdn.com/soloist_release_x86_64.tar.gz
+          fi
+          mkdir -p "$RUNNER_TEMP/provider-check"
+          curl -fL --max-time 120 "$url" -o "$RUNNER_TEMP/provider.tar.gz"
+          tar -xzf "$RUNNER_TEMP/provider.tar.gz" -C "$RUNNER_TEMP/provider-check"
+          "$RUNNER_TEMP/provider-check/soloist" --version
+          # Provider is not bundled, uploaded, paired or started for playback.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: matrix.publish
+        with:
+          name: release-${{ matrix.target }}
+          path: dist/release/*
+          if-no-files-found: error
+          retention-days: 14
+  website:
+    name: Website production build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - run: npm ci --prefix next
+      - run: npm run build --prefix next
+  publish:
+    name: Publish verified stable assets
+    needs: [native, website]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: release-*
+          path: collected
+      - name: Verify and combine all required native releases
+        run: python3 scripts/collect-release.py collected release "$GITHUB_REF_NAME"
+      - name: Create stable release after every native job passes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --draft --title "Spotify TUI $GITHUB_REF_NAME" --notes-file "docs/releases/$GITHUB_REF_NAME.md"
+          gh release upload "$GITHUB_REF_NAME" release/*
+          gh release edit "$GITHUB_REF_NAME" --draft=false --prerelease=false --latest
