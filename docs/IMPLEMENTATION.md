@@ -95,3 +95,21 @@ bash scripts/install-local.sh
 ```
 
 The script installs both built binaries in a version directory under a user prefix and creates paired command links. It refuses to replace unrelated existing files or symlinks. It does not install Soloist, log into Spotify, edit shell settings, or change global audio settings.
+
+## Stable tray/update acceptance, 28 October 2026
+
+The repository is public. v0.3.0 and v0.3.1 are ordinary stable GitHub releases, not drafts or previews. Published assets were not overwritten. Main subsequently adds the requested separate headphone hero to the website; the app's release binaries are unchanged by that visual revision.
+
+The live checks below used GitHub-downloaded, installed binaries under `~/.local`, never `dist`. v0.3.0 was downloaded from its GitHub draft for acceptance, then published. v0.3.1 was installed through the actual stable-release updater.
+
+- The actual Quickshell StatusNotifier watcher on Hyprland registered `Spotify TUI`. SNI properties and all six dbusmenu actions were queryable over the session bus. Icon fixtures validate ARGB pixmaps at tray sizes and the required menu wire signature. No panel or network configuration changed.
+- The installed v0.3.1 tray Activate action opened Kitty running the installed TUI. Verified the TUI executable path and its terminal parent; Kitty reparents itself, so it is not retained under the tray process tree.
+- Installed v0.3.0 loaded the real library, played a selected song, completed three Space pause/resume cycles with matching Playing/Paused labels, and reflected tray-menu pause/resume in the terminal. `q` preserved the tray/helper and restored terminal echo/canonical settings.
+- The installed real-account playback check confirmed full-track state, advancing position, pause, resume and seek. The volume request was accepted at the existing level.
+- Installed v0.3.0 detected stable v0.3.1 on startup. A real Ctrl-U downloaded and verified the release, activated the matching Go/Rust pair and exec'd the new installed executable in the same process. Both version commands reported 0.3.1. A new helper instance restored the playing track; Space pause/resume and terminal cleanup passed afterward. The app then reported it was up to date. No test version override or fake release endpoint was used for this live upgrade.
+- A separate public download of v0.3.1 passed SHA-256 for archive and downloader. Its two executable bytes matched the installed pair. One HTTP transfer timed out; the downloader's authenticated GitHub CLI fallback recovered and verification passed. A subsequent direct public transfer completed.
+- Installed v0.3.1 demo passed in a real terminal with empty XDG paths, generic sample songs, no audio and no account/runtime writes. Final doctor reported tray host/running, helper connected and paired. Audio was left paused.
+- Go race tests, formatting/vet, eight Rust tests, fmt/clippy and package-check passed. Regression checks cover confirmed and queued toggles, stale polls, Ctrl-U in search, restoration's busy state, stable version ordering, corruption, unsafe archives, unrelated installations, activation and rollback retention.
+- Next.js production export/type checking passed for home, docs, changelog and all four stable release pages. Desktop/mobile browser walkthroughs checked image loading, width bounds, navigation, release details and copy feedback. The browser clipboard connector did not consistently expose read-back; the button reported successful copying and the rendered commands were checked separately. Production dependency audit reported zero known vulnerabilities at the time of testing. The site is local/static source, not a deployed public website.
+
+These results do not establish genuine offline downloads, eight-hour memory/stability acceptance, MPRIS, full liked-song sequencing or search pagination. Those requirements remain outstanding. There is no measured RAM-saving claim and no ad-free guarantee for Free accounts.

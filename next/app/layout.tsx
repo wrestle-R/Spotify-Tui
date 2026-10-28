@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </a>
         <header className="nav">
           <Link href="/" className="brand">
-            <Image src="/logo-flat.png" width={32} height={32} alt="" />
+            <Image src="/logo-glass.png" width={32} height={32} alt="" />
             <span>
               spotify<span className="brand-light">tui</span>
               <span className="brand-dot">.</span>

@@ -34,14 +34,13 @@ export default function Home() {
           <div className="orbit orbit-one" />
           <div className="orbit orbit-two" />
           <Image
-            src="/logo-glass.png"
+            src="/hero-headphones.png"
             width={640}
             height={640}
             sizes="(max-width: 760px) 80vw, 45vw"
-            alt="Emerald glass musical note with three curved sound waves"
-            priority
+            alt="Floating headphones with emerald glass shells and charcoal cushions"
+            preload
           />
-          <span className="art-caption">LESS DESKTOP. MORE MUSIC.</span>
         </div>
         <div className="hero-bottom">
           <span>GO + RUST</span>
