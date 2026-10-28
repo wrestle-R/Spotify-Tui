@@ -124,15 +124,15 @@ Compare results against PLAN.md's proposed budgets. Any increased budget needs a
 Run these only after application source and manifests exist:
 
 ```bash
-gofmt -l cmd internal
-go vet ./...
-go test ./...
-go test -race ./...
-go build -trimpath -o dist/spotify-tui ./cmd/spotify-tui
-cargo fmt --manifest-path playback/Cargo.toml --check
-cargo clippy --manifest-path playback/Cargo.toml --locked --all-targets -- -D warnings
-cargo test --manifest-path playback/Cargo.toml --locked
-cargo build --manifest-path playback/Cargo.toml --locked --release
+gofmt -l go/cmd go/internal
+(cd go && go vet ./...)
+(cd go && go test ./...)
+(cd go && go test -race ./...)
+(cd go && CGO_ENABLED=0 go build -trimpath -o ../dist/spotify-tui ./cmd/spotify-tui)
+cargo fmt --manifest-path rust/Cargo.toml --check
+cargo clippy --manifest-path rust/Cargo.toml --locked --all-targets -- -D warnings
+cargo test --manifest-path rust/Cargo.toml --locked
+cargo build --manifest-path rust/Cargo.toml --locked --release
 ```
 
 Formatting requires empty `gofmt -l` output. The Go race detector may require an appropriate native toolchain even if the release app avoids cgo; check the local setup. Run provider-feature-specific checks for the selected build, not nonexistent backends. Build success does not replace account/audio/offline checks.

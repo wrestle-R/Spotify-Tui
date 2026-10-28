@@ -12,19 +12,20 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/wrestle-R/Spotify-Tui/internal/auth"
-	"github.com/wrestle-R/Spotify-Tui/internal/config"
-	"github.com/wrestle-R/Spotify-Tui/internal/ipc"
-	"github.com/wrestle-R/Spotify-Tui/internal/spotify"
-	"github.com/wrestle-R/Spotify-Tui/internal/ui"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/auth"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/config"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/ipc"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/spotify"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/ui"
 	"golang.org/x/term"
 )
 
-var version = "0.1.0-dev"
+var version = "0.2.0-alpha.1"
 
 const helpText = `Spotify TUI (Go interface + Rust helper)
 
 Commands:
+  --demo                   Try the UI with generic sample songs and no account
   setup --client-id ID [--soloist-path PATH] [--helper-path PATH]
         [--allow-file-token]  Explicit owner-only plaintext credential fallback
   login [--no-browser]      Browser PKCE authorization for library/search
@@ -48,6 +49,10 @@ func main() {
 	}
 }
 func run() error {
+	if len(os.Args) > 1 && (os.Args[1] == "--demo" || os.Args[1] == "demo") {
+		_, err := tea.NewProgram(ui.NewDemo(), tea.WithAltScreen()).Run()
+		return err
+	}
 	p, err := config.PathsForUser()
 	if err != nil {
 		return err

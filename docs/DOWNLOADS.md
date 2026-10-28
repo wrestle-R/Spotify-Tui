@@ -1,5 +1,24 @@
 # Downloads and release plan
 
+## Linux alpha download
+
+[Linux x86_64 archive](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.0-alpha.1/spotify-tui_0.2.0-alpha.1_linux_amd64.tar.gz) · [release files](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.0-alpha.1). This is a development alpha, not the completed offline player. Tested on Arch; glibc 2.39 or newer and libgcc_s are required. Soloist is obtained separately from Spotify.
+
+The private repository requires authenticated access. Download the script, inspect it and run it:
+
+```bash
+gh release download v0.2.0-alpha.1 --repo wrestle-R/Spotify-Tui --pattern download-linux.sh
+less download-linux.sh
+bash download-linux.sh --destination ./spotify-tui-linux
+bash ./spotify-tui-linux/install.sh --dry-run
+bash ./spotify-tui-linux/install.sh
+~/.local/bin/spotify-tui --demo
+```
+
+The downloader validates the release archive checksum, paths and entry types before extraction; it never executes the downloaded app. The installer activates both binaries under a version directory and refuses unrelated files. To change the destination, pass `--prefix /your/prefix` to `install.sh`. Previous build directories are retained. Spotify credentials and provider data stay outside the install directory.
+
+For a manual download, retrieve the archive and `SHA256SUMS` from that release, verify with `sha256sum --check --strict --ignore-missing SHA256SUMS`, then extract into an empty directory. SHA-256 from the same release detects corruption; it is not an independent signature. The archive contains both binaries, `install.sh`, documentation and the generic demo screenshot. No account data or provider binary is bundled.
+
 ## Development source
 
 Main contains the initial Go/Rust implementation, with the limitations in [IMPLEMENTATION.md](IMPLEMENTATION.md). This is not an accepted offline-player release. To retrieve source without installing or executing it, inspect `scripts/download-source.sh` and run:

@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-from_dir="$project_dir/dist"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+if [[ -x "$script_dir/spotify-tui" && -x "$script_dir/spotify-tui-playback" ]]; then
+  from_dir="$script_dir"
+else
+  project_dir=$(cd -- "$script_dir/.." && pwd)
+  from_dir="$project_dir/dist"
+fi
 prefix="${HOME}/.local"
 dry_run=false
 

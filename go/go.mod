@@ -1,4 +1,4 @@
-module github.com/wrestle-R/Spotify-Tui
+module github.com/wrestle-R/Spotify-Tui/go
 
 go 1.24.0
 

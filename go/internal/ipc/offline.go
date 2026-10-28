@@ -12,8 +12,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/wrestle-R/Spotify-Tui/internal/auth"
-	"github.com/wrestle-R/Spotify-Tui/internal/config"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/auth"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/config"
 )
 
 // OfflineProbe isolates only this app's playback processes, then restores the

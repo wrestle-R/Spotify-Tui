@@ -69,25 +69,24 @@ If verification fails in the normal browser too, complete Spotify's recovery or 
 
 ## Keyboard behavior
 
-- `Tab`: library/song-list focus; arrows or `j/k`: selection.
-- `Enter`: open a collection or play a selected track.
-- `P`: play the currently open playlist from its beginning using provider context.
-- `/`: track search; type normally and press Enter. Search currently returns the first 10 catalog results.
-- `Space`: pause/resume; `n/p`: next/previous; `h/l`: seek 5 seconds; `+/-`: app volume.
-- `a`: append selected track to provider queue; `s`: shuffle; `r`: repeat modes.
-- `L`: browser login; `c`: start/connect playback; `R`: refresh liked songs or current playlist.
-- `d`: show the honest offline capability status.
-- `q`: close TUI while helper playback continues; `Q`: stop helper and exit.
-- `./dist/spotify-tui stop`: stop this project's helper from another terminal.
+- Up/Down or `j/k` moves in the focused pane. Left/`h`/Esc returns to the library; Right/`l`/Enter opens a collection. Enter on a song plays it.
+- Tab/Shift-Tab switches panes. Page Up/Down and Home/End act on the focused pane. On narrow terminals, that pane occupies the screen instead of hiding the library.
+- `/` or Ctrl-F searches. Left/Right, Home/End, Delete and Backspace edit the query; Ctrl-U clears it, Ctrl-W deletes a word. Enter searches and Esc cancels without replacing your collection.
+- Space pauses/resumes. `n/p` or Ctrl-Right/Left skips tracks; `[/]` or Alt-Left/Right seeks five seconds; `+/-` adjusts volume.
+- `a` appends the selected song; `P` plays the open playlist from its start; `s` toggles shuffle and `r` cycles repeat.
+- `R`/Ctrl-R refreshes the focused pane. `c` reconnects; `L` signs in through the browser; `?`/F1 opens help.
+- Enter on a song connects the player automatically. Pending commands show feedback and prevent duplicate submissions while navigation remains available.
+- `q` closes the TUI with audio continuing; `Q` stops the helper and exits; Ctrl-C exits. `spotify-tui stop` stops this project's helper from another terminal.
+- `d` displays the unsupported offline capability. It cannot download songs.
 
-Selecting an individual liked song currently plays that track; the full liked-song sequence and selecting a playlist offset are not implemented. `P` plays the full playlist context. Required library paging is implemented; catalog search paging is not yet implemented. MPRIS/media keys are not implemented. These are development gaps, not accepted final behavior.
+Selecting an individual liked song plays that track; a full liked-song sequence and a playlist offset remain unimplemented. `P` plays the playlist context from its beginning. Search returns the first ten results. MPRIS/media keys remain unimplemented.
 
 ## Tests
 
 ```bash
 make test
 make check
-SPOTIFY_TUI_TEST_HELPER="$PWD/dist/spotify-tui-playback" go test -race ./internal/ipc
+SPOTIFY_TUI_TEST_HELPER="$PWD/dist/spotify-tui-playback" make test
 ```
 
 The last command runs Go against the real compiled Rust helper with a deliberately unavailable provider. It verifies capabilities, communication, offline rejection, and shutdown without an account. Rust also tests its WebSocket bridge against a synthetic local provider. These are integration checks, not proof of Spotify audio or offline entitlement.

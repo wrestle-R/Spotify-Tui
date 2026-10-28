@@ -1,6 +1,6 @@
 /local-docs/
 /dist/
-/playback/target/
+/rust/target/
 /work/
 .env
 .env.*

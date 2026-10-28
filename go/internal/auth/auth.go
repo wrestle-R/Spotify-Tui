@@ -19,7 +19,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wrestle-R/Spotify-Tui/internal/config"
+	"github.com/wrestle-R/Spotify-Tui/go/internal/config"
 	"github.com/zalando/go-keyring"
 )
 

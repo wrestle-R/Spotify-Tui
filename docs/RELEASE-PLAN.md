@@ -1,6 +1,6 @@
 # Future GitHub build and release workflow
 
-This document plans automation for a later working app. No application CI workflow is installed in this planning release.
+This document plans automation and acceptance for a later complete app. The requested Linux download now has a separately labelled `v0.2.0-alpha.1` development prerelease with a verified archive, local installer and download script. Offline downloads remain unsupported, so it does not pass the complete-product gates below. No GitHub Actions workflow is installed.
 
 ## Pull requests and branch changes
 

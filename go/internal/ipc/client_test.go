@@ -79,11 +79,11 @@ func TestRealRustHelperProtocol(t *testing.T) {
 }
 
 func TestSharedProtocolFixture(t *testing.T) {
-	request, err := os.ReadFile("../../protocol/fixtures/hello-request.json")
+	request, err := os.ReadFile("../../../protocol/fixtures/hello-request.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	response, err := os.ReadFile("../../protocol/fixtures/hello-response.json")
+	response, err := os.ReadFile("../../../protocol/fixtures/hello-response.json")
 	if err != nil {
 		t.Fatal(err)
 	}

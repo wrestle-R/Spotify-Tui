@@ -408,37 +408,33 @@ Planned quality gates include Go formatting/tests/vet/race checks and Rust forma
 
 Logs are opt-in for verbose diagnostics, bounded and rotated. Normal UI errors are short and actionable. Debug reports redact account identifiers where practical and never include credential storage or the entire private library.
 
-## 20. Proposed source layout
+## 20. Source layout
 
-This is the future layout, not a claim these source files already exist:
+Updated during implementation after the user requested separate `go/`, `rust/` and `scripts/` directories:
 
 ```text
 Spotify-Tui/
   README.md
   PLAN.md
   .gitignore
-  go.mod
-  go.sum
-  cmd/spotify-tui/main.go
-  internal/app/
-  internal/ui/
-  internal/auth/
-  internal/spotify/
-  internal/library/
-  internal/ipc/
-  internal/config/
-  playback/Cargo.toml
-  playback/Cargo.lock
-  playback/src/main.rs
-  playback/src/ipc.rs
-  playback/src/state.rs
-  playback/src/provider.rs
-  playback/src/lifecycle.rs
+  go/
+    go.mod
+    go.sum
+    cmd/spotify-tui/main.go
+    internal/auth/
+    internal/config/
+    internal/ipc/
+    internal/spotify/
+    internal/ui/
+  rust/
+    Cargo.toml
+    Cargo.lock
+    src/main.rs
   protocol/fixtures/
-  docs/ACCEPTANCE.md
-  docs/SOURCES.md
-  design/tui-concept.png
-  local-docs/
+  scripts/
+  docs/
+  design/
+  local-docs/                  # ignored private notes
 ```
 
 Keep one Go module and one Rust package initially. No monorepo orchestration framework is necessary. Add a future implementation-specific provider module only after choosing the actual provider. The generic provider boundary must not become several speculative backends.
@@ -455,7 +451,7 @@ If Soloist is chosen, link to official downloads and let the user obtain it; do 
 
 The user subsequently authorized creating a GitHub repository and a download script. This planning handoff therefore includes a private repository, an initial documentation commit, and a planning release with a verified-download script. No system service, global audio reconfiguration, Spotify account-login browser session, package installation, or application implementation is included. A later build request still cannot make missing provider capabilities exist.
 
-The current script downloads planning documents only. A real app installer and GitHub build/release pipeline are specified in [DOWNLOADS.md](docs/DOWNLOADS.md) and [RELEASE-PLAN.md](docs/RELEASE-PLAN.md); app binaries are gated on actual playback/offline acceptance.
+The original planning download remains documentation-only. A subsequent explicit request for a Linux app download authorized a clearly labelled development alpha. See [DOWNLOADS.md](docs/DOWNLOADS.md) for the binary bundle and checksum-verifying downloader. The complete-product release remains gated on playback/offline acceptance.
 
 ## 22. Local notes and environment-file workflow
 
