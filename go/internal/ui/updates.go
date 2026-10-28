@@ -78,6 +78,7 @@ func (m *Model) requestUpdate() tea.Cmd {
 func (m Model) WithResume(uri string, position int64) Model {
 	m.resumeURI = uri
 	m.resumePosition = max(int64(0), position)
+	m.resumeCommand = m.resumeAfterUpdate()
 	return m
 }
 func (m *Model) resumeAfterUpdate() tea.Cmd {

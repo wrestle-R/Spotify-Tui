@@ -1,0 +1,164 @@
+import Image from "next/image";
+import Link from "next/link";
+import { download, latest, repo } from "@/lib/releases";
+import { Code } from "@/components/code";
+export default function Home() {
+  return (
+    <main id="main">
+      <section className="hero wrap">
+        <div className="hero-copy">
+          <div className="eyebrow">
+            <span className="live-dot" /> {latest()} / BUILT FOR LINUX
+          </div>
+          <h1>
+            All the music.
+            <br />A little less
+            <br />
+            <em>everything else.</em>
+          </h1>
+          <p className="intro">
+            Spotify was eating my RAM. I just wanted my playlists.
+            <br className="desktop" /> So I made a terminal player.
+          </p>
+          <div className="actions">
+            <a className="button primary" href={download()}>
+              <span aria-hidden="true">↓</span> Download for Linux
+            </a>
+            <Link href="/docs" className="text-link">
+              Get it running <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
+          <p className="fine">x86_64 · glibc 2.39+ · Premium setup required</p>
+        </div>
+        <div className="hero-art">
+          <div className="orbit orbit-one" />
+          <div className="orbit orbit-two" />
+          <Image
+            src="/logo-glass.png"
+            width={640}
+            height={640}
+            sizes="(max-width: 760px) 80vw, 45vw"
+            alt="Emerald glass musical note with three curved sound waves"
+            priority
+          />
+          <span className="art-caption">LESS DESKTOP. MORE MUSIC.</span>
+        </div>
+        <div className="hero-bottom">
+          <span>GO + RUST</span>
+          <span>KEYBOARD FIRST</span>
+          <span>YOUR MUSIC, LOCALLY</span>
+          <span>01 / A SMALLER PLAYER</span>
+        </div>
+      </section>
+      <section className="showcase wrap" id="player">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">FAMILIAR MUSIC. DIFFERENT WINDOW.</span>
+            <h2>
+              Your library.
+              <br />
+              At your fingertips.
+            </h2>
+          </div>
+          <p>
+            Liked songs, playlists and a quick search.
+            <br />
+            Open a song. Hit Enter. Get back to whatever
+            <br className="desktop" /> you were doing.
+          </p>
+        </div>
+        <div className="terminal-shell">
+          <div className="terminal-top">
+            <div>
+              <i />
+              <i />
+              <i />
+            </div>
+            <span>spotify-tui · demo</span>
+            <span>⌘ &nbsp; ~/music</span>
+          </div>
+          <Image
+            src="/tui-screenshot.png"
+            alt="Actual Spotify TUI demo showing generic sample playlists and songs in a green and charcoal terminal"
+            width={1280}
+            height={760}
+            sizes="(max-width: 1200px) 94vw, 1120px"
+          />
+        </div>
+        <div className="caption">
+          <span>
+            Actual terminal capture. Generic demo music, no account data.
+          </span>
+          <Link href="/docs#keyboard">Meet the keyboard shortcuts ↗</Link>
+        </div>
+      </section>
+      <section className="features wrap">
+        <article>
+          <span className="feature-index">01 / THE POINT</span>
+          <h3>
+            Keep your RAM
+            <br />
+            for your work.
+          </h3>
+          <p>
+            A terminal interface with a Rust playback helper. Built because the
+            desktop app felt too heavy. Memory savings haven’t been benchmarked
+            against Spotify yet.
+          </p>
+        </article>
+        <article>
+          <span className="feature-index">02 / THE FEEL</span>
+          <h3>
+            Hands on keys.
+            <br />
+            Music in the tray.
+          </h3>
+          <p>
+            Arrow keys move, Enter plays, Space pauses. Close the TUI and keep
+            listening. The tray brings playback controls into your Linux panel.
+          </p>
+        </article>
+        <article>
+          <span className="feature-index">03 / THE UPKEEP</span>
+          <h3>
+            A new release?
+            <br />
+            Ctrl-U. Done.
+          </h3>
+          <p>
+            The player checks for stable updates when it opens. Ctrl-U
+            downloads, verifies and installs a matching Go and Rust pair, then
+            restarts the app.
+          </p>
+        </article>
+      </section>
+      <section className="setup-banner wrap">
+        <span className="eyebrow">A LITTLE SETUP. THEN YOUR MUSIC.</span>
+        <div>
+          <h2>
+            Bring your account.
+            <br />
+            <em>We’ll bring the terminal.</em>
+          </h2>
+          <Link href="/docs" className="button primary">
+            Let’s set it up <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+        <p>
+          You’ll need your own Spotify Developer app and personal Soloist key.
+          Sign-in opens in your normal browser. No passwords on this website.
+        </p>
+      </section>
+      <section className="honest wrap">
+        <span>BEFORE YOU DOWNLOAD</span>
+        <p>
+          Online playback is the current focus.{" "}
+          <strong>Offline downloads aren’t supported yet.</strong> This isn’t a
+          finished replacement for every Spotify feature.{" "}
+          <Link href="/docs#limits">Read what works and what’s left ↗</Link>
+        </p>
+        <a href={`${repo}/releases/tag/${latest()}`}>Release notes ↗</a>
+      </section>
+    </main>
+  );
+}

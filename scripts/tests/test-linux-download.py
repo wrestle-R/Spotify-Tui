@@ -1,6 +1,6 @@
 import hashlib,io,os,pathlib,shutil,subprocess,tarfile,tempfile
 root=pathlib.Path(__file__).resolve().parents[2];os.chdir(root)
-version='0.3.0';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
+version='0.3.1';name=f'spotify-tui_{version}_linux_amd64';archive=name+'.tar.gz'
 base=pathlib.Path(tempfile.mkdtemp(prefix='release test ',dir=root/'work'))
 fake=base/'fakebin';fake.mkdir();gh=fake/'gh'
 gh.write_text('''#!/usr/bin/env bash

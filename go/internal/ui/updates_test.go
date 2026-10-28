@@ -63,3 +63,15 @@ func TestSpaceDelegatesToggleInsteadOfUsingStaleUIState(t *testing.T) {
 		t.Fatal(p.calls)
 	}
 }
+
+func TestUpdateRestorationKeepsPlayerBusyUntilConfirmed(t *testing.T) {
+	m := fixture().WithResume("spotify:track:fixture", 4000)
+	if !m.busy || m.resumeCommand == nil || m.playerCancel == nil {
+		t.Fatal("resume work was detached from the active model")
+	}
+	_, cmd := key(m, tea.KeySpace)
+	if cmd != nil {
+		t.Fatal("duplicate playback request during restoration")
+	}
+	m.cancelWork()
+}

@@ -24,7 +24,7 @@ import (
 	"golang.org/x/term"
 )
 
-var version = "0.3.0"
+var version = "0.3.1"
 
 const helpText = `Spotify TUI (Go interface + Rust helper)
 
@@ -326,6 +326,9 @@ func run() error {
 	}
 	if next := finished.RestartPath(); next != "" {
 		state, _ := player.State(ctx)
+		if state.Status == "playing" && state.PositionUpdatedAt > 0 {
+			state.PositionMS += max(int64(0), time.Now().UnixMilli()-state.PositionUpdatedAt)
+		}
 		if err = tray.Stop(ctx); err != nil {
 			return fmt.Errorf("update installed; quit old tray before reopening: %w", err)
 		}
@@ -333,6 +336,9 @@ func run() error {
 			return fmt.Errorf("update installed; stop old helper before reopening: %w", err)
 		}
 		nextArgs := []string{next}
+		if noTray {
+			nextArgs = append(nextArgs, "--no-tray")
+		}
 		if state.Status == "playing" && strings.HasPrefix(state.URI, "spotify:track:") {
 			nextArgs = append(nextArgs, "--resume-after-update", state.URI, strconv.FormatInt(state.PositionMS, 10))
 		}

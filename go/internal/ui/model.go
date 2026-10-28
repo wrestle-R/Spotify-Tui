@@ -49,6 +49,7 @@ type loginMsg struct{ err error }
 type tickMsg time.Time
 
 type Model struct {
+	resumeCommand                              tea.Cmd
 	resumeURI                                  string
 	resumePosition                             int64
 	updater                                    Updater
@@ -92,7 +93,7 @@ func (m Model) Init() tea.Cmd {
 	if m.Cfg.ClientID == "" {
 		return tea.Batch(tick(), m.checkUpdates())
 	}
-	return tea.Batch(tick(), m.checkUpdates(), m.resumeAfterUpdate(), m.loadPlaylists(), m.loadRows("liked", "", m.generation), m.pollPlayer())
+	return tea.Batch(tick(), m.checkUpdates(), m.resumeCommand, m.loadPlaylists(), m.loadRows("liked", "", m.generation), m.pollPlayer())
 }
 func (m *Model) notify(message, kind string) { m.status = message; m.noticeKind = kind }
 func (m Model) loadPlaylists() tea.Cmd {

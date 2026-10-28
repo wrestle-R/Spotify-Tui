@@ -2,7 +2,7 @@
 set -euo pipefail
 project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "$project_dir"
-version=${1:-0.3.0}
+version=${1:-0.3.1}
 [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]] || { printf 'Invalid version\n' >&2; exit 1; }
 [[ "$(uname -s)" == Linux && "$(uname -m)" == x86_64 ]] || { printf 'Package on Linux x86_64\n' >&2; exit 1; }
 [[ "$(dist/spotify-tui version)" == "spotify-tui $version" && "$(dist/spotify-tui-playback --version)" == "spotify-tui-playback $version" ]] || { printf 'Build both matching binaries first\n' >&2; exit 1; }

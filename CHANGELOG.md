@@ -2,19 +2,31 @@
 
 Features and fixes, grouped by release series, newest first. Full details, upgrade instructions and validation live on each version's page. GitHub hosts the Linux downloads.
 
-**Latest stable: [v0.3.0](#v030)** · Stable releases only
+**Latest stable: [v0.3.1](#v031)** · Stable releases only
 
-[Download archive ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.3.0)
+[Download archive ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.3.1)
 
 ## 0.3.x
 
 **Music in the tray, updates in the terminal**
 
+<a id="v031"></a>
+
+### v0.3.1
+
+28 October 2026 · **Stable** · **Latest stable** · Linux x86_64
+
+- Add the Next.js website under `next/`: glass logo, landing page, step-by-step account setup and a changelog with release detail pages.
+- Keep playback restoration marked busy after an update, so keyboard requests cannot race the initial play/seek operation.
+- Restore an up-to-date playback position and preserve the no-tray preference when restarting after an update.
+
+[Download v0.3.1 ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.3.1/spotify-tui_0.3.1_linux_amd64.tar.gz) · [Full release details →](docs/releases/v0.3.1.md) · [GitHub release ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.3.1)
+
 <a id="v030"></a>
 
 ### v0.3.0
 
-28 October 2026 · **Stable** · **Latest stable** · Linux x86_64
+28 October 2026 · **Stable** · Linux x86_64
 
 - Add a Linux tray with the approved music-note logo, playback controls and an action to reopen the TUI.
 - Check stable releases on startup. Ctrl-U verifies and installs the update, then restarts the application.
@@ -40,7 +52,7 @@ Keyboard movement that follows the focused pane, a Spotify-green theme, generic 
 - Include the changelog alongside the README and version detail pages in the extracted package.
 - Keep matching TUI/helper versions and verify the complete stable download and installation path.
 
-[Download latest ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.1/spotify-tui_0.2.1_linux_amd64.tar.gz) · [Full release details →](docs/releases/v0.2.1.md) · [GitHub release ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.1)
+[Download v0.2.1 ↓](https://github.com/wrestle-R/Spotify-Tui/releases/download/v0.2.1/spotify-tui_0.2.1_linux_amd64.tar.gz) · [Full release details →](docs/releases/v0.2.1.md) · [GitHub release ↗](https://github.com/wrestle-R/Spotify-Tui/releases/tag/v0.2.1)
 
 <a id="v020"></a>
 
@@ -64,4 +76,4 @@ The [planning-v0.1.0 bundle](https://github.com/wrestle-R/Spotify-Tui/releases/t
 
 Each release page explains the tested packages, requirements, known issues and available validation evidence. The current Linux package is checksum-verified and unsigned. Offline downloads, broader provider recovery and long-session memory/stability validation remain outstanding. The repository and release downloads are public.
 
-[Read the latest release details →](docs/releases/v0.3.0.md)
+[Read the latest release details →](docs/releases/v0.3.1.md)
