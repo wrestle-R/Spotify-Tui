@@ -4,7 +4,7 @@ Prepared: 28 October 2026, Asia/Calcutta.
 
 Project directory: `/home/rdp/Desktop/code/Spotify-Tui`.
 
-Status: planning complete; application implementation has not started. The full requested product has an unresolved external dependency: standalone Spotify offline downloads and playback.
+Status: planning complete; initial Go/Rust implementation started after the user's subsequent explicit request. Standalone Spotify offline downloads remain an unresolved external dependency and a full-product release blocker. See docs/IMPLEMENTATION.md for current code and test status. Earlier instructions to stop before all product code have been superseded by that start request; the offline requirement has not been removed.
 
 ## 1. What we are making
 

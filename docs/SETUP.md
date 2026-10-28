@@ -1,0 +1,93 @@
+# Run the development build
+
+This is the initial Go/Rust implementation. Offline Spotify downloads remain unsupported and the complete product is not accepted. Real account, local playback, and a clean online restart passed on the development machine; the isolated offline cold start failed. Fresh installations require your own account and provider setup. Automated tests use synthetic data.
+
+## Build
+
+From `/home/rdp/Desktop/code/Spotify-Tui`:
+
+```bash
+make build
+./dist/spotify-tui --help
+./dist/spotify-tui doctor
+./dist/spotify-tui
+```
+
+Requires Go and Rust/Cargo. The build creates both executables in `dist/`. Credentials and runtime state live in private XDG directories, outside this source checkout. No `.env` file is needed.
+
+## Browser sign-in for library and search
+
+Use your normal browser for Spotify verification. Embedded browsers can fail verification and are not necessary for this application.
+
+1. Open [Spotify Developer dashboard](https://developer.spotify.com/dashboard) in your usual browser and sign in there.
+2. Create or use your own development app with Web API access. Complete any account/terms/verification steps yourself.
+3. Register this exact redirect: `http://127.0.0.1:43821/callback`.
+4. Allowlist your Spotify account if required by the dashboard.
+5. Copy the public **client ID**, not the client secret.
+6. Run setup and login:
+
+```bash
+./dist/spotify-tui setup --client-id YOUR_PUBLIC_CLIENT_ID
+./dist/spotify-tui login
+```
+
+The app launches your default system browser through `xdg-open`. If you prefer opening the URL yourself:
+
+```bash
+./dist/spotify-tui login --no-browser
+```
+
+Keep that command running, open the printed URL in your normal browser on the same machine, and approve the requested read-only library/playlist access. Authorization returns to the local callback. The terminal confirms success only after the code exchange and credential save succeed. No password is entered into the TUI.
+
+The callback expires after five minutes. If the port is occupied, the app reports it before opening a browser. You can repeat login after resolving the conflict. Do not paste callback codes, access tokens, refresh tokens, or a client secret into chat.
+
+Credentials use the desktop keyring. If no usable keyring exists and you consciously accept plaintext owner-only files, enable `--allow-file-token` during setup. That fallback is not encryption. The default does not silently write plaintext tokens.
+
+## Local playback through official Soloist
+
+Web API sign-in above supplies library/search access. Soloist has separate pairing and an individual provider key.
+
+1. Obtain the Linux x86_64 build from [Spotify's official Soloist downloads](https://developer.spotify.com/documentation/soloist/reference/downloads-and-updates). This repository does not redistribute that binary.
+2. Put `soloist` on PATH or supply its absolute path during setup.
+3. Generate your personal Soloist API key in Spotify's developer dashboard. Keep it private.
+4. Save it through the hidden input:
+
+```bash
+./dist/spotify-tui provider-key
+```
+
+5. Launch the TUI and press `c`. The Rust helper starts Soloist with bounded playback cache and a loopback control interface.
+6. Pair by selecting **Spotify TUI Local** from an official Spotify client's device list on the same local network. Close that official client afterward and verify local playback independently. Keep the same data directory for later restarts. Automatic restoration passed a clean online restart test after the startup/shutdown fixes.
+
+If the device is missing when a phone supplies USB tethering, try Spotify desktop on the same computer for the pairing step. Discovery across tethering is not verified. Do not delete provider data or credentials as a first troubleshooting step.
+
+The provider key is passed from Go to Rust over stdin. Soloist's documented startup interface uses a command-line key argument internally; same-user process inspection can expose that argument. Logs deliberately avoid printing it. If this exposure is unacceptable, do not configure this provider; the current integration has no verified alternate secret-input interface.
+
+Soloist's loopback API has no built-in client authentication/origin protection. Our own Go/Rust interface uses a private Unix socket with same-user checks, but that does not add authentication to Soloist's separate loopback listener. This local integration limitation remains relevant when choosing the provider.
+
+If verification fails in the normal browser too, complete Spotify's recovery or verification flow there. The app does not bypass verification or solve CAPTCHAs. If the developer dashboard itself is unavailable, account configuration and live playback testing remain blocked.
+
+## Keyboard behavior
+
+- `Tab`: library/song-list focus; arrows or `j/k`: selection.
+- `Enter`: open a collection or play a selected track.
+- `P`: play the currently open playlist from its beginning using provider context.
+- `/`: track search; type normally and press Enter. Search currently returns the first 10 catalog results.
+- `Space`: pause/resume; `n/p`: next/previous; `h/l`: seek 5 seconds; `+/-`: app volume.
+- `a`: append selected track to provider queue; `s`: shuffle; `r`: repeat modes.
+- `L`: browser login; `c`: start/connect playback; `R`: refresh liked songs or current playlist.
+- `d`: show the honest offline capability status.
+- `q`: close TUI while helper playback continues; `Q`: stop helper and exit.
+- `./dist/spotify-tui stop`: stop this project's helper from another terminal.
+
+Selecting an individual liked song currently plays that track; the full liked-song sequence and selecting a playlist offset are not implemented. `P` plays the full playlist context. Required library paging is implemented; catalog search paging is not yet implemented. MPRIS/media keys are not implemented. These are development gaps, not accepted final behavior.
+
+## Tests
+
+```bash
+make test
+make check
+SPOTIFY_TUI_TEST_HELPER="$PWD/dist/spotify-tui-playback" go test -race ./internal/ipc
+```
+
+The last command runs Go against the real compiled Rust helper with a deliberately unavailable provider. It verifies capabilities, communication, offline rejection, and shutdown without an account. Rust also tests its WebSocket bridge against a synthetic local provider. These are integration checks, not proof of Spotify audio or offline entitlement.

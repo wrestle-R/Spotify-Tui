@@ -1,1 +1,7 @@
 /local-docs/
+/dist/
+/playback/target/
+/work/
+.env
+.env.*
+!.env.example

@@ -1,5 +1,17 @@
 # Downloads and release plan
 
+## Development source
+
+Main contains the initial Go/Rust implementation, with the limitations in [IMPLEMENTATION.md](IMPLEMENTATION.md). This is not an accepted offline-player release. To retrieve source without installing or executing it, inspect `scripts/download-source.sh` and run:
+
+```bash
+bash scripts/download-source.sh --destination "$PWD/Spotify-Tui-source"
+```
+
+The script uses authenticated GitHub CLI access, verifies Git objects, exports only the requested commit's tracked files, and prints the resolved commit. Use `--ref FULL_COMMIT_SHA` for a specific version. It refuses existing destinations and excludes Git metadata, private notes, credentials, generated binaries and the vendor provider. It requires `gh`, `git`, and `tar`. The default `main` can change; Git object integrity is not an independent publisher signature.
+
+If you do not have the source yet, obtain it with `gh repo clone wrestle-R/Spotify-Tui`, inspect the scripts, then follow [SETUP.md](SETUP.md). The local installer in `scripts/install-local.sh` operates on binaries you build yourself; it does not download a released player or Soloist.
+
 ## Available now: planning documents
 
 Repository: [wrestle-R/Spotify-Tui](https://github.com/wrestle-R/Spotify-Tui), private by default. Only accounts with access can download its files. An anonymous public link would require a separate visibility decision; this planning task does not make the repository public.

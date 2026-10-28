@@ -2,9 +2,11 @@
 
 Reviewed again on 28 October 2026 after the user requested implementation, browser sign-in, and proper offline tests.
 
+Later on the same date, the user explicitly requested starting implementation. The independent Go/Rust components have now been built and real browser/library/local-playback checks have passed. See [IMPLEMENTATION.md](IMPLEMENTATION.md) for the current results. The older planning-stage results below are historical and must not be read as the latest code status. The full offline requirement remains unsatisfied.
+
 ## Decision
 
-**The full requested product is currently blocked by the mandatory standalone Spotify offline requirement.** No suitable offline provider has been established. This is an upstream capability finding, not a failed application test. No application code or Spotify login has been presented as working.
+**The full requested product is currently blocked by the mandatory standalone Spotify offline requirement.** No suitable offline provider has been established. The original provider-capability finding remains; later implementation tests in [IMPLEMENTATION.md](IMPLEMENTATION.md) supersede the historical planning results below.
 
 The user's latest message authorizes implementation and browser-based login. A subsequent clarification reaffirmed Premium and mandatory offline playback. It does not remove offline downloads from the requirements, authorize replacing Spotify audio with another service, or authorize keeping the official desktop player open. Premium is account eligibility; it does not itself supply a custom player's missing offline API.
 
@@ -19,7 +21,7 @@ Browser authorization supplies account access; it cannot add an absent provider 
 
 This does not establish that no separately authorized Spotify integration could ever provide offline playback. It establishes that the evaluated routes are insufficient to promise and implement the requested complete player now.
 
-## What has actually been tested
+## Historical planning-stage tests
 
 | Item | Result |
 | --- | --- |
@@ -39,7 +41,7 @@ This does not establish that no separately authorized Spotify integration could 
 | Secondary HTTP/1-only download experiment with a 60-second cap | TIMEOUT; not required by the successful normal script path |
 | Browser Spotify authorization with a real application | NOT RUN |
 | Account API/library access | NOT RUN |
-| Go/Rust application build | NOT RUN; no app code exists |
+| Go/Rust application build | NOT RUN at the planning stage |
 | Standalone full-track playback | NOT RUN |
 | Downloaded-track cold start without network | BLOCKED by unavailable provider route |
 | Memory/CPU savings | NOT MEASURED |

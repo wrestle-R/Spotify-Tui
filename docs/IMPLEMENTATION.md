@@ -1,0 +1,82 @@
+# Initial implementation status
+
+28 October 2026. The user explicitly requested starting implementation after the planning/feasibility discussion. This authorizes building the independent functional parts while preserving offline as an unresolved required feature. The full product is not accepted and is not being advertised as complete.
+
+## Implemented
+
+- Go terminal interface using Bubble Tea and Lip Gloss, with library focus, track lists, keyboard search, playback status, resize handling, and terminal restoration.
+- Browser Authorization Code with PKCE, exact loopback redirect, callback state validation, expiry/refresh handling, and coordinated refreshes. `login --no-browser` supports completing verification in an ordinary browser.
+- Desktop-keyring storage. An owner-only plaintext fallback requires explicit configuration. The Web API client secret is not used.
+- Real Spotify profile, playlist listing, owned/collaborative playlist items, liked songs with pagination, and initial catalog search results.
+- Account-scoped metadata cache with atomic replacement. A failed refresh retains the prior complete collection and marks it stale. This is metadata caching, not offline audio.
+- Rust playback helper, private Unix-socket protocol, same-user credential checks, bounded command/frame limits, and separate provider-state confirmation.
+- Official Soloist process startup with persistent data, saved-session restoration on a clean online restart, loopback WebSocket control, pause/resume, individual-track and playlist-context playback, seek, queue append, shuffle/repeat controls, and volume commands.
+- Helper detach/stop behavior, version/doctor commands, live-account/control checks, an isolated offline-start probe, and local install script.
+
+## Verified on the actual machine
+
+- Go and Rust release builds.
+- Go tests with race detector and vet; Go formatting.
+- Rust tests, formatting, and clippy with warnings denied.
+- Go calling the actual compiled Rust helper over a real Unix socket, including unsupported-download rejection and shutdown.
+- Rust WebSocket bridge tested against a local synthetic provider; command acceptance is not misreported as confirmed playback.
+- Actual Spotify browser authorization completed by the user in their normal browser. Tokens saved in the desktop keyring.
+- Actual account identity, playlist listing, an owned/collaborative playlist's items, liked songs, and catalog search.
+- Actual TUI displaying the real library, receiving search input, loading results, and restoring terminal settings on exit.
+- Fast combined search input regression found in the real terminal smoke test and fixed.
+- Official Soloist Linux binary downloaded from Spotify and executed locally: `1.3.10.21`, Linux x86_64, build dated 27 October 2026. The binary remains in ignored local work storage and is not redistributed by this repository.
+- User completed one-time device pairing, then confirmed official desktop/web/mobile clients were closed.
+- Local full-track playback state, advancing playback clock, pause, resume, seek, and volume-command acceptance.
+- Actual running PipeWire output stream, traced through its client to the `soloist` executable. Soloist labels the stream “Spotify”, so checking only for a “Soloist” stream label misses it.
+- Local installer dry run, installation and upgrade into an isolated project-work prefix, both installed version commands, and refusal to overwrite unrelated files/symlinks.
+- Rebuilding while the helper is running: atomic executable replacement avoids Linux's text-file-busy failure.
+- Seven Rust tests, including stale endpoint cleanup that preserves session files.
+- Clean helper/provider stop and start followed by restored paired account, full-track state, progress, pause/resume and seek with Spotify desktop closed.
+- After the offline experiment, the online helper restored the paired session and the same playback check passed again.
+- Real shuffle and context/track repeat changes confirmed from provider state, with the user's original options restored afterward. Repeat-state parsing was corrected to match Soloist's documented string field.
+
+Build toolchain on the tested Arch x86_64 machine: Go `1.27.1-X:nodwarf5`, Rust `1.99.0`, Cargo `1.99.0`. These identify the tested environment, not a tested minimum-version matrix.
+
+## Restart fixes and limits
+
+A live restart exposed stale provider endpoint files after abrupt termination. Startup now clears only `ws.addr` and `ws.port`, and shutdown gives Soloist time to exit gracefully. A subsequent startup initially reported unpaired, and the device was absent from both phone and desktop pickers while the phone provided USB tethering. Private provider diagnostics then confirmed successful restoration from the existing stored session. The normal helper restored pairing without another manual pairing, and a subsequent clean stop/start and playback test passed. The transient unpaired episode's full cause is not established; these results do not prove every failure/reconnection mode. No user network settings were changed.
+
+## Offline remains unsatisfied
+
+The provider advertises no supported music-download operation. Earlier network-isolated startup probes were inconclusive because the online restart control was broken too. After correcting startup/shutdown and verifying a paired online restart, the isolated probe was repeated. It reached the provider control interface but failed to restore an authenticated session without external connectivity. Isolation used a new user/network namespace containing only loopback, with no external interface/default route; host networking stayed unchanged. The online helper was then restored, pairing was confirmed, and full playback/control checks passed again. This is a failed offline cold start on the tested version/account, not proof about all possible Spotify integrations.
+
+This does not count as testing a successful download workflow, because no qualifying download API exists. Cached metadata and transient encrypted audio caches are not represented as downloaded music. The TUI explicitly shows this limitation and the Rust helper rejects download requests.
+
+## Remaining work and limits
+
+- Genuine Spotify offline downloads and offline cold-start playback: required, blocked.
+- Broader crash/network-recovery reliability beyond the successful clean online restart remains unverified.
+- Full liked-song sequential queue and starting a playlist at an arbitrary selected occurrence: not implemented. `Enter` plays an individual track; `P` plays the open playlist context from its start; `a` appends a track to the provider queue.
+- Catalog search currently returns the first 10 results; search paging remains to be implemented.
+- Followed/curated playlist item enumeration can be restricted by Spotify. A restricted playlist may still be playable as a provider context using `P`, but that is not a claim that its rows can be listed.
+- Metadata caching uses JSON files in this first build; SQLite and a global disk-cache eviction policy from the original plan are deferred. Config is non-secret JSON rather than TOML to avoid an extra parser in the initial implementation.
+- MPRIS/media keys, eight-hour stability testing, crash recovery under every termination mode, and complete upgrade/uninstall acceptance remain outstanding.
+- Resource targets in PLAN.md are still targets until measured under the stated workload. Any short sample is labeled separately and does not establish long-term RAM savings.
+
+## Short memory sample
+
+With the terminal UI open and the local provider paired but paused, a single `/proc/*/smaps_rollup` sample measured **93.8 MiB combined PSS**: Go TUI 34.7 MiB, Rust helper 1.9 MiB, Soloist main 47.2 MiB and its crash handler 10.1 MiB. Rounding can make component totals differ by 0.1 MiB. This excludes the terminal/browser, is not a playing or eight-hour workload, and has no equivalent official Spotify baseline. No measured savings claim is made.
+
+## Run it
+
+```bash
+cd /home/rdp/Desktop/code/Spotify-Tui
+make build
+./dist/spotify-tui
+```
+
+See [SETUP.md](SETUP.md) for fresh-machine setup. This machine's public client ID/provider path are in its private XDG config; credentials are in the keyring, not the repository. No real `.env` file was created.
+
+Local install, if wanted:
+
+```bash
+bash scripts/install-local.sh --dry-run
+bash scripts/install-local.sh
+```
+
+The script installs both built binaries in a version directory under a user prefix and creates paired command links. It refuses to replace unrelated existing files or symlinks. It does not install Soloist, log into Spotify, edit shell settings, or change global audio settings.
